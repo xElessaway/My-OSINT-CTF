@@ -1,0 +1,726 @@
+<!DOCTYPE html><html lang="en"> <head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="description" content="Multi-architecture Linux and IoT malware staging, payload delivery, operator workspace exposure, and possible botnet recruitment."><meta name="generator" content="Astro v5.18.1"><link rel="canonical" href="https://xelessaway.me/threat-intelligence/threat-cluster-150-241-65-250/"><!-- Open Graph / WhatsApp / Telegram / Discord / LinkedIn --><meta property="og:site_name" content="Ahmed Elessaway (xElessaway)"><meta property="og:title" content="Threat Cluster 150[.]241[.]65[.]250 | Threat Intelligence Dossier"><meta property="og:description" content="Multi-architecture Linux and IoT malware staging, payload delivery, operator workspace exposure, and possible botnet recruitment."><meta property="og:type" content="article"><meta property="og:url" content="https://xelessaway.me/threat-intelligence/threat-cluster-150-241-65-250/"><meta property="og:image" content="https://xelessaway.me/logo-me.png"><meta property="og:image:secure_url" content="https://xelessaway.me/logo-me.png"><meta property="og:image:alt" content="Threat Cluster 150[.]241[.]65[.]250 | Threat Intelligence Dossier"><meta property="article:section" content="Threat Intelligence"><meta property="article:tag" content="threat-intelligence"><meta property="article:tag" content="dfir"><meta property="article:tag" content="malware-analysis"><meta property="article:tag" content="linux"><meta property="article:tag" content="iot-botnet"><meta property="article:tag" content="exposed-infrastructure"><!-- Twitter / X Card --><meta name="twitter:card" content="summary_large_image"><meta name="twitter:site" content="@ahmed_elessaway"><meta name="twitter:creator" content="@ahmed_elessaway"><meta name="twitter:title" content="Threat Cluster 150[.]241[.]65[.]250 | Threat Intelligence Dossier"><meta name="twitter:description" content="Multi-architecture Linux and IoT malware staging, payload delivery, operator workspace exposure, and possible botnet recruitment."><meta name="twitter:image" content="https://xelessaway.me/logo-me.png"><meta name="twitter:image:alt" content="Threat Cluster 150[.]241[.]65[.]250 | Threat Intelligence Dossier"><link rel="icon" type="image/png" href="/logo-me.png"><link rel="apple-touch-icon" href="/logo-me.png"><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400..800&family=Hanken+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet"><link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&display=block" rel="stylesheet"><script data-goatcounter="https://xelessaway.goatcounter.com/count" async src="https://gc.zgo.at/count.js"></script><script>
+      (() => {
+        const savedTheme = localStorage.getItem("theme");
+        const theme = savedTheme === "dark" ? "dark" : "light";
+        document.documentElement.setAttribute("data-theme", theme);
+      })();
+    </script><title>Threat Cluster 150[.]241[.]65[.]250 | Threat Intelligence Dossier</title><style>.dossier-wide-container[data-astro-cid-necseomn]{max-width:1140px;width:100%;margin-inline:auto}.article-prose[data-astro-cid-necseomn]>h1:first-child{display:none}.article-status-pill[data-astro-cid-necseomn].tracking{background:#f59e0b1a;border-color:#f59e0b;color:#f59e0b}.article-status-pill[data-astro-cid-necseomn].tracking .pulse-dot[data-astro-cid-necseomn]{background:#f59e0b}[data-astro-cid-necseomn][data-theme=dark] .article-status-pill[data-astro-cid-necseomn].tracking{background:#f59e0b22;border-color:#fbbf24;color:#fbbf24}[data-astro-cid-necseomn][data-theme=dark] .article-status-pill[data-astro-cid-necseomn].tracking .pulse-dot[data-astro-cid-necseomn]{background:#fbbf24}.article-status-pill[data-astro-cid-necseomn].active{background:var(--secondary-soft);border-color:var(--secondary);color:var(--secondary)}.article-status-pill[data-astro-cid-necseomn].disrupted,.article-status-pill[data-astro-cid-necseomn].historic{background:var(--surface-panel);border-color:var(--line-soft);color:var(--text-soft)}.article-status-pill[data-astro-cid-necseomn].disrupted .pulse-dot[data-astro-cid-necseomn],.article-status-pill[data-astro-cid-necseomn].historic .pulse-dot[data-astro-cid-necseomn]{background:var(--text-soft)}
+</style>
+<link rel="stylesheet" href="/_astro/about.CVC_7FNF.css"></head> <body class="ops-root"> <a class="skip-link" href="#main-content">Skip to content</a> <header class="site-header"> <div class="shell-bar"> <div class="shell-left"> <button class="menu-toggle" type="button" aria-expanded="false" aria-controls="site-nav"> <span class="sr-only">Toggle navigation</span> <span></span> </button> <a class="brand-mark" href="/" aria-label="Ahmed Elessaway home"> <img src="/logo-me.png" alt="Ahmed Elessaway" class="brand-avatar"> <span class="brand-copy"> <strong>xElessaway</strong> <small>research portfolio</small> </span> </a> </div> <nav id="site-nav" class="site-nav" aria-label="Primary navigation"> <a class="nav-link" href="/"> Home </a><a class="nav-link" href="/blog/"> Research </a><a class="nav-link is-active" href="/threat-intelligence/"> Threat Intel </a><a class="nav-link" href="/ctf/"> Practice </a><a class="nav-link" href="/about/"> Profile </a> </nav> <div class="shell-right-actions"> <button class="theme-toggle-btn" type="button" id="theme-toggle" aria-label="Toggle light and dark theme" title="Toggle Theme"> <!-- Moon Icon for Dark Mode --> <svg class="theme-svg theme-icon-moon" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"> <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path> </svg> <!-- Sun Icon for Light Mode --> <svg class="theme-svg theme-icon-sun" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"> <circle cx="12" cy="12" r="5"></circle> <line x1="12" y1="1" x2="12" y2="3"></line> <line x1="12" y1="21" x2="12" y2="23"></line> <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line> <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line> <line x1="1" y1="12" x2="3" y2="12"></line> <line x1="21" y1="12" x2="23" y2="12"></line> <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line> <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line> </svg> </button> <a class="header-contact" href="/about/#contact">Connect</a> </div> </div> </header> <script type="module">const c=document.querySelector(".menu-toggle"),e=document.querySelector("#site-nav"),s=window.matchMedia("(min-width: 1100px)");if(c instanceof HTMLButtonElement&&e instanceof HTMLElement){const o=()=>{e.classList.remove("is-open"),c.setAttribute("aria-expanded","false")},t=()=>{s.matches&&o()};c.addEventListener("click",()=>{const n=e.classList.toggle("is-open");c.setAttribute("aria-expanded",String(n))}),e.querySelectorAll("a").forEach(n=>{n.addEventListener("click",()=>{o()})}),document.addEventListener("click",n=>{const a=n.target;!s.matches&&e.classList.contains("is-open")&&a instanceof Node&&!e.contains(a)&&!c.contains(a)&&o()}),"addEventListener"in s&&s.addEventListener("change",t),t()}const i=document.getElementById("theme-toggle");i?.addEventListener("click",()=>{const t=(document.documentElement.getAttribute("data-theme")||"light")==="dark"?"light":"dark";document.documentElement.setAttribute("data-theme",t),localStorage.setItem("theme",t)});</script> <main id="main-content" class="page-main">  <div class="article-dossier-container dossier-wide-container" data-astro-cid-necseomn> <!-- Top Back Navigation Bar --> <nav class="article-breadcrumb-bar" data-astro-cid-necseomn> <a href="/threat-intelligence/" class="article-back-link" data-astro-cid-necseomn> <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class aria-hidden="true"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg> <span data-astro-cid-necseomn>Back to Threat Intelligence Feed</span> </a> <span class="article-doc-id" data-astro-cid-necseomn>DOSSIER_ID: THREAT-CLUSTER-150-241-65-250</span> </nav> <!-- Unified Dossier Header Card --> <header class="article-dossier-header" data-astro-cid-necseomn> <div class="article-tape-sticker" aria-hidden="true" data-astro-cid-necseomn></div> <div class="article-meta-ribbon" data-astro-cid-necseomn> <span class="article-type-pill" data-astro-cid-necseomn>THREAT DOSSIER</span> <span class="article-status-pill active" data-astro-cid-necseomn> <span class="pulse-dot" aria-hidden="true" data-astro-cid-necseomn></span> ACTIVE </span> </div> <h1 class="article-title" data-astro-cid-necseomn>Threat Cluster 150[.]241[.]65[.]250</h1> <p class="article-lede" data-astro-cid-necseomn>Multi-architecture Linux and IoT malware staging, payload delivery, operator workspace exposure, and possible botnet recruitment.</p> <div class="article-info-strip" data-astro-cid-necseomn> <div class="article-info-item" data-astro-cid-necseomn> <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class aria-hidden="true"><circle cx="12" cy="12" r="10"></circle><line x1="2" y1="12" x2="22" y2="12"></line><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path></svg> <span data-astro-cid-necseomn>Unknown / exposed Linux staging infrastructure</span> </div> <div class="article-info-item" data-astro-cid-necseomn> <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class aria-hidden="true"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg> <span data-astro-cid-necseomn>Active: 2026-08 &rarr; 2026-08</span> </div> <div class="article-info-item" data-astro-cid-necseomn> <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class aria-hidden="true"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path><path d="M9 12l2 2 4-4"></path></svg> <span data-astro-cid-necseomn>Aliases: 150241-889 Exposed Staging Node, Raul Multi-Architecture Cluster</span> </div> </div> <div class="article-tags-wrap" data-astro-cid-necseomn> <span class="article-tag-chip" data-astro-cid-necseomn>#threat-intelligence</span><span class="article-tag-chip" data-astro-cid-necseomn>#dfir</span><span class="article-tag-chip" data-astro-cid-necseomn>#malware-analysis</span><span class="article-tag-chip" data-astro-cid-necseomn>#linux</span><span class="article-tag-chip" data-astro-cid-necseomn>#iot-botnet</span><span class="article-tag-chip" data-astro-cid-necseomn>#exposed-infrastructure</span> </div> </header> <!-- Main Dossier Manuscript --> <main class="article-manuscript-panel" data-astro-cid-necseomn> <div class="article-prose prose" data-astro-cid-necseomn> <h1 id="threat-cluster-15024165250">Threat Cluster 150[.]241[.]65[.]250</h1>
+<blockquote>
+<p>This dossier was generated from passive acquisition and static analysis. Retrieved artifacts were preserved as unexecuted evidence. No login, exploitation, modification, deletion, or active interaction with the endpoint was performed.</p>
+</blockquote>
+<h3 id="evidence-coverage">Evidence Coverage</h3>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th>Metric</th><th>Value</th></tr></thead><tbody><tr><td>Root directory listing acquired</td><td>1</td></tr><tr><td>Root-level artifacts preserved</td><td>7</td></tr><tr><td>Text / configuration artifacts preserved</td><td>5</td></tr><tr><td>Linux ELF binaries preserved</td><td>2</td></tr><tr><td>Architecture-specific payloads listed but not fully acquired</td><td>14</td></tr><tr><td>Directory descendants acquired</td><td>0</td></tr><tr><td>PE candidates identified</td><td>0</td></tr><tr><td>Credential / secret exposure indicators</td><td>2 high-risk exposure locations</td></tr><tr><td>Dynamic execution performed</td><td>No</td></tr><tr><td>Acquisition completed within bounded limits</td><td>No — larger transfers stalled and were stopped</td></tr></tbody></table>
+<h2 id="motivation--objectives">Motivation &#x26; Objectives</h2>
+<h3 id="strategic-motivation">Strategic Motivation</h3>
+<p>The endpoint appears to be an exposed Linux staging workspace supporting multi-architecture payload delivery. Its directory listing contains binaries named for multiple CPU architectures, while the acquired shell history records the use of temporary HTTP servers, <code>wget</code>, <code>chmod +x</code>, and direct execution of downloaded payloads.[2]</p>
+<h3 id="operational-objectives">Operational Objectives</h3>
+<ul>
+<li>
+<p><strong>Multi-Architecture Payload Delivery:</strong> Hosting <code>raul.*</code> binaries and related Linux ELF files for x86, ARM, MIPS, PowerPC, SPARC, and other architectures.</p>
+</li>
+<li>
+<p><strong>Botnet or IoT Recruitment:</strong> Using architecture-specific binaries such as <code>pito.*</code>, <code>raul.*</code>, and <code>bot.i686</code> for possible deployment to heterogeneous Linux and embedded systems.</p>
+</li>
+<li>
+<p><strong>Staging Infrastructure:</strong> Operating Python HTTP servers on ports <code>889</code> and <code>67</code> for file distribution.</p>
+</li>
+<li>
+<p><strong>Operator Workspace Management:</strong> Retaining shell history, scripts, screen-session commands, and downloaded tooling in a web-accessible directory.</p>
+</li>
+<li>
+<p><strong>Defense Evasion and Cleanup:</strong> Maintaining a VPS-cleaner script capable of killing processes and deleting artifacts from temporary directories and cron locations.</p>
+</li>
+</ul>
+<h3 id="inferred-target-profile">Inferred Target Profile</h3>
+<ul>
+<li>
+<p>Linux servers and VPS instances</p>
+</li>
+<li>
+<p>IoT and embedded devices</p>
+</li>
+<li>
+<p>Internet-exposed edge systems</p>
+</li>
+<li>
+<p>Hosts vulnerable to unauthorized payload download and execution</p>
+</li>
+</ul>
+<h3 id="key-operational-findings">Key Operational Findings</h3>
+<ul>
+<li>
+<p>Unauthenticated Python <code>SimpleHTTP</code> directory listing on port <code>889</code></p>
+</li>
+<li>
+<p>Multi-architecture <code>raul.*</code> payload set exposed in the web root</p>
+</li>
+<li>
+<p><code>bot</code> and <code>dropper</code> Linux ELF binaries exposed and partially acquired</p>
+</li>
+<li>
+<p>Shell history showing <code>wget</code>, <code>curl</code>, <code>chmod +x</code>, and direct execution</p>
+</li>
+<li>
+<p>Historical retrieval and execution of <code>pito.arm7</code>, <code>pito.x86</code>, and <code>bot.i686</code></p>
+</li>
+<li>
+<p>Historical use of <code>nc -nlvp 9001</code>, indicating listener setup</p>
+</li>
+<li>
+<p>VPS cleaner script capable of process termination and artifact deletion</p>
+</li>
+<li>
+<p>Strong tradecraft overlap with the supplied <code>194[.]238[.]57[.]124</code> cluster</p>
+</li>
+<li>
+<p>No direct evidence in this acquisition of successful victim compromise or current C2 activity</p>
+</li>
+</ul>
+<h3 id="credentials-keys--tokens-redacted">Credentials, Keys &#x26; Tokens (Redacted )</h3>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th>Risk</th><th>Type</th><th>Redacted Value</th><th>Source / Layer</th></tr></thead><tbody><tr><td><strong>High</strong></td><td>SSH material exposure</td><td><code>[NOT ACQUIRED — .ssh/ DIRECTORY PUBLICLY LISTED]</code></td><td>Root directory listing / L0</td></tr><tr><td><strong>High</strong></td><td>X11 authentication cookie</td><td><code>[REDACTED_XAUTHORITY_COOKIE]</code></td><td><code>.Xauthority</code> / L0</td></tr><tr><td><strong>Medium</strong></td><td>Shell-history credentials or operational secrets</td><td><code>[NOT REPRODUCED]</code></td><td><code>.bash_history</code> / L0</td></tr></tbody></table>
+<h3 id="verified-indicators">Verified Indicators</h3>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th>Type</th><th>Defanged Value / Hash</th><th>Context</th><th>Confidence</th></tr></thead><tbody><tr><td><strong>Investigated Host</strong></td><td><code>150[.]241[.]65[.]250</code></td><td>User-supplied investigated host</td><td>High (observed)</td></tr><tr><td><strong>Service Endpoint</strong></td><td><code>150[.]241[.]65[.]250:889</code></td><td>Unauthenticated HTTP directory listing</td><td>High (observed)</td></tr><tr><td><strong>Related Service Endpoint</strong></td><td><code>150[.]241[.]65[.]250:67</code></td><td>Historical HTTP server referenced in <code>.bash_history</code></td><td>High (historical)</td></tr><tr><td><strong>Related IPv4</strong></td><td><code>94[.]154[.]43[.]249</code></td><td>Historical payload retrieval source</td><td>Medium-to-high (historical)</td></tr><tr><td><strong>Domain</strong></td><td><code>node-32404[.]nodehost[.]ru</code></td><td>Hostname found in acquired <code>.Xauthority</code> strings</td><td>Medium (context required)</td></tr><tr><td><strong>SHA-256</strong></td><td><code>118be4b076806c3d426507fa11cc0fffc40c62be51343aef8e82cc04d91330b6</code></td><td>Acquired <code>bot</code> Linux ELF</td><td>High (computed)</td></tr><tr><td><strong>SHA-256</strong></td><td><code>79aebbbde524f8ec10d232ea48ed3c83068e5f96d8831c7f62820a36688e2550</code></td><td>Acquired <code>dropper</code> Linux ELF</td><td>High (computed)</td></tr><tr><td><strong>Filename Pattern</strong></td><td><code>raul.*</code></td><td>Architecture-specific payload family listed at root</td><td>High (observed)</td></tr><tr><td><strong>Filename Pattern</strong></td><td><code>pito.*</code></td><td>Payload family referenced in shell history and related dossier</td><td>High (historical/correlated)</td></tr><tr><td><strong>Filename</strong></td><td><code>bot.i686</code></td><td>Historical download and execution target</td><td>High (historical)</td></tr><tr><td><strong>Filename</strong></td><td><code>pito.arm7</code></td><td>Historical download and execution target</td><td>High (historical)</td></tr><tr><td><strong>Filename</strong></td><td><code>pito.x86</code></td><td>Historical execution target</td><td>High (historical)</td></tr></tbody></table>
+<h3 id="windows-lnk-findings">Windows LNK Findings</h3>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th>File</th><th>Relative Path</th><th>Working Directory</th><th>Arguments / Command Hints</th></tr></thead><tbody><tr><td><em>None observed</em></td><td></td><td></td><td></td></tr></tbody></table>
+<h3 id="pe-candidates">PE Candidates</h3>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th>Candidate</th><th>Source</th><th>Architecture</th><th>Entry Point</th><th>Suspicious Sections</th><th>SHA-256</th></tr></thead><tbody><tr><td><em>None observed</em></td><td></td><td></td><td></td><td></td><td></td></tr></tbody></table>
+<h3 id="linux-elf-candidates">Linux ELF Candidates</h3>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th>Candidate</th><th>Source</th><th>Architecture</th><th>Static observations</th><th>SHA-256</th></tr></thead><tbody><tr><td><code>bot</code></td><td>Root-level acquisition</td><td>x86-64</td><td>Statically linked; debug information present; not stripped</td><td><code>118be4b076806c3d426507fa11cc0fffc40c62be51343aef8e82cc04d91330b6</code></td></tr><tr><td><code>dropper</code></td><td>Root-level acquisition</td><td>x86-64</td><td>Dynamically linked; anomalous section-header offset reported by file parser; strings include <code>/proc/self/mountinfo</code> and Go runtime indicators</td><td><code>79aebbbde524f8ec10d232ea48ed3c83068e5f96d8831c7f62820a36688e2550</code></td></tr><tr><td><code>raul.*</code></td><td>Root directory listing</td><td>Multiple architectures</td><td>Listed but not fully acquired in bounded pass</td><td>Not available</td></tr></tbody></table>
+<h2 id="deep-technical-threat-analysis">Deep Technical Threat Analysis</h2>
+<h3 id="1-executive-technical-assessment">1. Executive Technical Assessment</h3>
+<p>The endpoint is best assessed as <strong>high-confidence hostile or malicious staging infrastructure</strong>. The direct evidence is an unauthenticated directory listing containing operational files and multiple architecture-specific binaries, reinforced by shell-history records of payload retrieval and execution.[2]</p>
+<p>The evidence supports a staging and distribution role. It does not prove that every file is malicious, that a victim was compromised, or that the service remained active after acquisition.</p>
+<h3 id="2-artifact-inventory">2. Artifact Inventory</h3>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th>Artifact</th><th>Type</th><th>Size</th><th>SHA-256</th><th>Notes</th></tr></thead><tbody><tr><td><code>.bash_history</code></td><td>Shell history</td><td>24,794 bytes</td><td>Preserved in acquisition manifest</td><td>Contains payload retrieval, execution, listener, and cleanup commands.</td></tr><tr><td><code>.bashrc</code></td><td>Shell configuration</td><td>3,106 bytes</td><td>Preserved in acquisition manifest</td><td>Standard configuration observed; retain for timeline analysis.</td></tr><tr><td><code>.lesshst</code></td><td>History file</td><td>20 bytes</td><td>Preserved in acquisition manifest</td><td>No substantive command content observed.</td></tr><tr><td><code>.profile</code></td><td>Shell profile</td><td>161 bytes</td><td>Preserved in acquisition manifest</td><td>Standard profile content observed.</td></tr><tr><td><code>.Xauthority</code></td><td>X11 authentication data</td><td>204 bytes</td><td>Preserved in acquisition manifest</td><td>Contains X11 cookie marker and hostname; treat as sensitive.</td></tr><tr><td><code>bot</code></td><td>Linux ELF binary</td><td>1,822,880 bytes</td><td><code>118be4b076806c3d426507fa11cc0fffc40c62be51343aef8e82cc04d91330b6</code></td><td>x86-64, statically linked, debug information present.</td></tr><tr><td><code>dropper</code></td><td>Linux ELF binary</td><td>2,097,152 bytes acquired</td><td><code>79aebbbde524f8ec10d232ea48ed3c83068e5f96d8831c7f62820a36688e2550</code></td><td>x86-64, dynamically linked; parser reported malformed section-header offset.</td></tr><tr><td><code>raul.*</code></td><td>Linux ELF payload family</td><td>Not acquired</td><td>Not available</td><td>Fourteen architecture-labelled files listed in root index.</td></tr><tr><td><code>exploit.py</code>, <code>test1.py</code>, <code>test2.py</code></td><td>Python scripts</td><td>Not acquired</td><td>Not available</td><td>Listed in root index; require authorized static acquisition.</td></tr></tbody></table>
+<h3 id="3-script-behaviors">3. Script Behaviors</h3>
+<h4 id="31-bash_history">3.1 <code>.bash_history</code></h4>
+<p>The history records the following operational behavior:</p>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th>Behavior</th><th>Evidence</th><th>Assessment</th></tr></thead><tbody><tr><td>Temporary HTTP staging</td><td><code>screen python3 -m http.server 889</code> and port <code>67</code></td><td>Deliberate file-serving activity.</td></tr><tr><td>Payload retrieval</td><td><code>wget</code> and <code>curl</code> commands</td><td>Ingress tool transfer and staging.</td></tr><tr><td>Payload execution</td><td><code>chmod +x</code> followed by <code>./pito.arm7</code>, <code>./pito.x86</code>, and <code>./bot.i686</code></td><td>Historical execution attempts; success not established.</td></tr><tr><td>Listener setup</td><td><code>nc -nlvp 9001</code></td><td>Possible inbound control or transfer listener; intent unconfirmed.</td></tr><tr><td>Cleanup</td><td>VPS cleaner script</td><td>Process killing, temporary-file deletion, and crontab removal capability.</td></tr></tbody></table>
+<h4 id="32-vps-cleaner-script">3.2 VPS Cleaner Script</h4>
+<p>The shell history contains a script labelled “VPS CLEANER (killer-based ).” Its documented logic scans processes, scores suspicious characteristics, issues <code>kill -9</code>, deletes executable or hidden files from <code>/tmp</code>, <code>/var/tmp</code>, <code>/dev/shm</code>, <code>/mnt</code>, and <code>/run</code>, and removes user crontabs and <code>/etc/cron.d/*</code>.[2]</p>
+<p>This demonstrates <strong>indicator-removal and defensive-disruption capability</strong>. The current evidence does not establish whether the cleaner was executed, when it was executed, or what systems it affected.</p>
+<h3 id="4-network-indicators">4. Network Indicators</h3>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th>Indicator ID</th><th>URL / Endpoint</th><th>Associated Evidence</th></tr></thead><tbody><tr><td>NI-001</td><td><code>hxxp://150[.]241[.]65[.]250:889/</code></td><td>Direct passive acquisition.</td></tr><tr><td>NI-002</td><td><code>hxxp://150[.]241[.]65[.]250:67/pito.arm7</code></td><td>Historical command in <code>.bash_history</code>.</td></tr><tr><td>NI-003</td><td><code>hxxp://94[.]154[.]43[.]249:233/gg11</code></td><td>Historical command in <code>.bash_history</code>.</td></tr><tr><td>NI-004</td><td><code>hxxp://94[.]154[.]43[.]249:82/BORRARYA.zip</code></td><td>Historical command in <code>.bash_history</code>.</td></tr><tr><td>NI-005</td><td><code>hxxp://94[.]154[.]43[.]249:33/bots/bot.i686</code></td><td>Historical command in <code>.bash_history</code>.</td></tr><tr><td>NI-006</td><td><code>hxxp://94[.]154[.]43[.]249:98/bot</code></td><td>Historical command in <code>.bash_history</code>.</td></tr><tr><td>NI-007</td><td><code>/raul.*</code></td><td>Architecture-specific files listed in root directory.</td></tr><tr><td>NI-008</td><td><code>node-32404[.]nodehost[.]ru</code></td><td>Hostname observed in <code>.Xauthority</code> strings.</td></tr></tbody></table>
+<h3 id="5-cross-cluster-correlation">5. Cross-Cluster Correlation</h3>
+<p>The strongest correlation is with the supplied <strong>Threat Cluster 194[.]238[.]57[.]124</strong> dossier. That dossier documents a <code>pito.*</code> multi-architecture payload family, <code>gg11</code>, <code>dp.sh</code>, the contextual IP <code>94[.]154[.]43[.]249</code>, and port <code>889</code> staging.[3] The current endpoint independently exposes architecture-specific <code>raul.*</code> files and records historical use of <code>pito.arm7</code>, <code>pito.x86</code>, and <code>bot.i686</code>.[2]</p>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th>Correlation</th><th>Evidence</th><th>Confidence</th></tr></thead><tbody><tr><td>Shared multi-architecture staging model</td><td><code>raul.*</code> root listing and <code>pito.*</code> / <code>bot.i686</code> history</td><td>High</td></tr><tr><td>Shared related infrastructure</td><td><code>94[.]154[.]43[.]249</code> appears in current history and supplied dossier</td><td>Medium-to-high</td></tr><tr><td>Exact ownership or operator identity</td><td>No shared credentials, certificates, logs, or account evidence</td><td>Not established</td></tr><tr><td>Relationship to Windows Mythic/Adaptix clusters</td><td>No direct current-endpoint artifacts identified</td><td>Low / unconfirmed</td></tr></tbody></table>
+<h3 id="6-pe-and-lnk-assessment">6. PE and LNK Assessment</h3>
+<p>No Windows PE candidates or LNK artifacts were identified in the bounded acquisition. The observed payload set is Linux ELF-oriented. This conclusion is limited because the listed Python scripts, <code>raul.*</code> files, directory descendants, and <code>.ssh/</code> contents were not fully acquired.</p>
+<h3 id="7-secrets-and-sensitive-material">7. Secrets and Sensitive Material</h3>
+<p>The public listing exposes <code>.ssh/</code>, shell history, and <code>.Xauthority</code>. These are sensitive locations even where the acquisition does not reveal a usable private key or token. The <code>.Xauthority</code> file contains an X11 cookie marker, and its value is intentionally omitted from this dossier.[2]</p>
+<p>If the infrastructure belongs to the organization, all SSH keys, cookies, cloud credentials, API tokens, and credentials appearing in shell history should be treated as compromised and rotated through a trusted administrative path.</p>
+<h3 id="8-recommended-defensive-actions">8. Recommended Defensive Actions</h3>
+<ol>
+<li>
+<p>Remove public access to the directory while preserving the host and web-server logs.</p>
+</li>
+<li>
+<p>Acquire a forensic image, volatile memory, process/socket state, cron and systemd state, and the complete <code>.ssh/</code> directory under controlled evidence handling.</p>
+</li>
+<li>
+<p>Hunt for <code>raul.*</code>, <code>pito.*</code>, <code>bot</code>, <code>dropper</code>, <code>gg11</code>, <code>dp.sh</code>, <code>wget</code>, <code>curl</code>, <code>chmod +x</code>, <code>screen</code>, and <code>nc -nlvp 9001</code> across Linux, IoT, and edge-device telemetry.</p>
+</li>
+<li>
+<p>Block or monitor <code>150[.]241[.]65[.]250</code>, <code>94[.]154[.]43[.]249</code>, and the historical service ports after validating business ownership and avoiding disruption to legitimate investigations.</p>
+</li>
+<li>
+<p>Rotate exposed SSH keys, X11 cookies, API tokens, passwords, and cloud credentials.</p>
+</li>
+<li>
+<p>Reverse-engineer <code>bot</code>, <code>dropper</code>, and the uncollected <code>raul.*</code> payloads in an isolated environment; do not execute them on production systems.</p>
+</li>
+<li>
+<p>Review historical authentication, firewall, DNS, proxy, and cloud-provider telemetry for connections to the listed infrastructure.</p>
+</li>
+</ol>
+<h2 id="conclusion">Conclusion</h2>
+<p>The endpoint at <code>150[.]241[.]65[.]250:889</code> was publicly exposing an operational Linux staging workspace. The combination of directory exposure, architecture-specific payload names, historical download-and-execute commands, and cleanup tooling indicates a serious infrastructure-security incident and a likely relationship to the supplied multi-architecture <code>194[.]238[.]57[.]124</code> cluster.</p>
+<p>The evidence supports high-confidence classification as hostile staging infrastructure. It does not independently establish victim compromise, current command-and-control activity, persistence, or attribution to a named threat actor. Those questions require server logs, disk and memory acquisition, network telemetry, and analysis of the uncollected payloads.</p> </div> <!-- Companion Reports (if any) -->  <!-- Dossier Footer & Author Monogram --> <footer class="article-dossier-footer" data-astro-cid-necseomn> <div class="article-author-card" data-astro-cid-necseomn> <img src="/logo-me.png" alt="Ahmed Elessaway (xElessaway)" class="article-author-avatar-img" data-astro-cid-necseomn> <div class="article-author-info" data-astro-cid-necseomn> <p class="eyebrow" data-astro-cid-necseomn>Investigator / Author</p> <h3 class="article-author-name" data-astro-cid-necseomn>Ahmed Elessaway (xElessaway)</h3> <p class="article-author-bio" data-astro-cid-necseomn>
+Cybersecurity researcher specializing in DFIR, threat intelligence, and OSINT investigation methodologies.
+</p> <div class="article-author-links" data-astro-cid-necseomn> <a href="https://www.linkedin.com/in/ahmedelessaway/" target="_blank" rel="noreferrer" class="author-social-pill" data-astro-cid-necseomn> <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="currentColor" class aria-hidden="true"><path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z"></path></svg> <span data-astro-cid-necseomn>LinkedIn</span> </a><a href="https://x.com/ahmed_elessaway" target="_blank" rel="noreferrer" class="author-social-pill" data-astro-cid-necseomn> <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="currentColor" class aria-hidden="true"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"></path></svg> <span data-astro-cid-necseomn>X</span> </a><a href="https://xelessaway.medium.com/" target="_blank" rel="noreferrer" class="author-social-pill" data-astro-cid-necseomn> <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="currentColor" class aria-hidden="true"><path d="M13.54 12a6.8 6.8 0 01-6.77 6.82A6.8 6.8 0 010 12a6.8 6.8 0 016.77-6.82A6.8 6.8 0 0113.54 12zM20.96 12c0 3.54-1.51 6.42-3.38 6.42-1.87 0-3.39-2.88-3.39-6.42s1.52-6.42 3.39-6.42 3.38 2.88 3.38 6.42M24 12c0 3.17-.53 5.75-1.19 5.75-.66 0-1.19-2.58-1.19-5.75s.53-5.75 1.19-5.75C23.47 6.25 24 8.83 24 12z"></path></svg> <span data-astro-cid-necseomn>Medium</span> </a> </div> </div> </div> <div class="article-nav-actions" data-astro-cid-necseomn> <a href="/threat-intelligence/" class="button button-primary" data-astro-cid-necseomn> <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class aria-hidden="true"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
+Back to Dossiers Feed
+</a> <a href="/blog/" class="button button-ghost" data-astro-cid-necseomn>
+Browse Research Archive
+<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class aria-hidden="true"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg> </a> </div> </footer> </main> </div>  </main> <footer class="site-footer"> <div class="container footer-grid"> <div class="footer-brand-wrap"> <a class="footer-brand" href="/"> <img src="/logo-me.png" alt="Ahmed Elessaway" class="footer-avatar"> <span>xElessaway</span> </a> <p class="footer-copy">Field notes, investigations, and practical security research.</p> </div> <div class="footer-links footer-links-inline"> <a href="/" class="footer-nav-link">Home</a><a href="/blog/" class="footer-nav-link">Research</a><a href="/threat-intelligence/" class="footer-nav-link">Threat Intel</a><a href="/ctf/" class="footer-nav-link">Practice</a><a href="/about/" class="footer-nav-link">Profile</a> </div> <div class="footer-links footer-links-inline footer-links-right"> <a href="https://www.linkedin.com/in/ahmedelessaway/" target="_blank" rel="noreferrer" class="footer-social-link" title="LinkedIn"> <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="currentColor" class aria-hidden="true"><path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z"></path></svg> <span>LinkedIn</span> </a><a href="https://x.com/ahmed_elessaway" target="_blank" rel="noreferrer" class="footer-social-link" title="X"> <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="currentColor" class aria-hidden="true"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"></path></svg> <span>X</span> </a><a href="https://xelessaway.medium.com/" target="_blank" rel="noreferrer" class="footer-social-link" title="Medium"> <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="currentColor" class aria-hidden="true"><path d="M13.54 12a6.8 6.8 0 01-6.77 6.82A6.8 6.8 0 010 12a6.8 6.8 0 016.77-6.82A6.8 6.8 0 0113.54 12zM20.96 12c0 3.54-1.51 6.42-3.38 6.42-1.87 0-3.39-2.88-3.39-6.42s1.52-6.42 3.39-6.42 3.38 2.88 3.38 6.42M24 12c0 3.17-.53 5.75-1.19 5.75-.66 0-1.19-2.58-1.19-5.75s.53-5.75 1.19-5.75C23.47 6.25 24 8.83 24 12z"></path></svg> <span>Medium</span> </a> </div> </div> </footer> <dialog class="image-lightbox" data-image-lightbox aria-label="Expanded image viewer"> <button class="image-lightbox-close" type="button" data-image-lightbox-close aria-label="Close image viewer">
+Close
+</button> <img class="image-lightbox-media" data-image-lightbox-media alt=""> <p class="image-lightbox-caption" data-image-lightbox-caption hidden></p> </dialog> <script>
+      const lightbox = document.querySelector("[data-image-lightbox]");
+      const lightboxMedia = lightbox?.querySelector("[data-image-lightbox-media]");
+      const lightboxCaption = lightbox?.querySelector("[data-image-lightbox-caption]");
+      const lightboxClose = lightbox?.querySelector("[data-image-lightbox-close]");
+
+      const isZoomableImage = (element) =>
+        element instanceof HTMLImageElement &&
+        (element.matches(".prose img") || element.matches(".challenge-image") || element.hasAttribute("data-zoomable-image"));
+
+      const setZoomableState = () => {
+        document.querySelectorAll(".prose img, .challenge-image, img[data-zoomable-image]").forEach((element) => {
+          if (element instanceof HTMLImageElement) {
+            element.tabIndex = 0;
+            element.setAttribute("role", "button");
+            element.setAttribute("aria-haspopup", "dialog");
+          }
+        });
+      };
+
+      const openLightbox = (image) => {
+        if (!(lightbox instanceof HTMLDialogElement) || !(lightboxMedia instanceof HTMLImageElement)) {
+          return;
+        }
+
+        lightboxMedia.src = image.currentSrc || image.src;
+        lightboxMedia.alt = image.alt || "";
+
+        if (lightboxCaption instanceof HTMLElement) {
+          const caption = image.alt?.trim();
+          lightboxCaption.textContent = caption ?? "";
+          lightboxCaption.hidden = !caption;
+        }
+
+        lightbox.showModal();
+      };
+
+      const closeLightbox = () => {
+        if (lightbox instanceof HTMLDialogElement && lightbox.open) {
+          lightbox.close();
+        }
+      };
+
+      document.addEventListener("click", (event) => {
+        const target = event.target;
+
+        if (target instanceof Element) {
+          const image = target.closest(".prose img, .challenge-image, img[data-zoomable-image]");
+
+          if (isZoomableImage(image)) {
+            event.preventDefault();
+            openLightbox(image);
+            return;
+          }
+        }
+
+        if (target === lightbox || target === lightboxClose) {
+          closeLightbox();
+        }
+      });
+
+      document.addEventListener("keydown", (event) => {
+        const target = event.target;
+
+        if ((event.key === "Enter" || event.key === " ") && isZoomableImage(target)) {
+          event.preventDefault();
+          openLightbox(target);
+        }
+      });
+
+      const setupCollapsibleTables = () => {
+        document.querySelectorAll(".prose table").forEach((table) => {
+          if (!(table instanceof HTMLTableElement) || table.dataset.collapsedInitialized) {
+            return;
+          }
+          table.dataset.collapsedInitialized = "true";
+
+          const rows = table.querySelectorAll("tbody tr");
+          const rowCount = rows.length;
+
+          // Only collapse tables that have more than 10 rows
+          if (rowCount <= 10) {
+            // Still ensure responsive wrapper if not already present
+            const existingWrap = table.closest(".table-responsive-wrap, .table-collapse-wrap");
+            if (!existingWrap) {
+              const resWrap = document.createElement("div");
+              resWrap.className = "table-responsive-wrap";
+              table.parentNode?.insertBefore(resWrap, table);
+              resWrap.appendChild(table);
+            }
+            return;
+          }
+
+          // Build collapsible container
+          const collapseWrap = document.createElement("div");
+          collapseWrap.className = "table-collapse-wrap";
+
+          const viewport = document.createElement("div");
+          viewport.className = "table-collapse-viewport is-collapsed";
+
+          const resWrap = document.createElement("div");
+          resWrap.className = "table-responsive-wrap";
+
+          const fadeOverlay = document.createElement("div");
+          fadeOverlay.className = "table-fade-overlay";
+
+          const toggleBar = document.createElement("div");
+          toggleBar.className = "table-toggle-bar";
+
+          const toggleBtn = document.createElement("button");
+          toggleBtn.type = "button";
+          toggleBtn.className = "table-toggle-btn";
+          toggleBtn.setAttribute("aria-expanded", "false");
+          toggleBtn.innerHTML = `
+            <span class="table-doodle-stamp">
+              <span class="pulse-dot" aria-hidden="true"></span>
+              <span class="table-toggle-label">SHOW ALL ${rowCount} RECORDS</span>
+            </span>
+            <svg class="table-doodle-chevron" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <path d="M6 9l6 6 6-6"></path>
+            </svg>
+          `;
+
+          toggleBtn.addEventListener("click", () => {
+            const isCollapsed = viewport.classList.toggle("is-collapsed");
+            const label = toggleBtn.querySelector(".table-toggle-label");
+            if (isCollapsed) {
+              toggleBtn.classList.remove("is-expanded");
+              toggleBtn.setAttribute("aria-expanded", "false");
+              if (label) label.textContent = `SHOW ALL ${rowCount} RECORDS`;
+              collapseWrap.scrollIntoView({ behavior: "smooth", block: "nearest" });
+            } else {
+              toggleBtn.classList.add("is-expanded");
+              toggleBtn.setAttribute("aria-expanded", "true");
+              if (label) label.textContent = `COLLAPSE TABLE (${rowCount} RECORDS)`;
+            }
+          });
+
+          toggleBar.appendChild(toggleBtn);
+
+          // Insert structure around table
+          table.parentNode?.insertBefore(collapseWrap, table);
+          resWrap.appendChild(table);
+          viewport.appendChild(resWrap);
+          viewport.appendChild(fadeOverlay);
+          collapseWrap.appendChild(viewport);
+          collapseWrap.appendChild(toggleBar);
+        });
+      };
+
+      setZoomableState();
+      setupCollapsibleTables();
+      document.addEventListener("astro:page-load", () => {
+        setZoomableState();
+        setupCollapsibleTables();
+      });
+    </script> </body> </html> 
