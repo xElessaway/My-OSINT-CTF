@@ -5,8 +5,8 @@ status: "active"
 origin: "Unknown / exposed Linux staging infrastructure"
 motivation: "Multi-architecture Linux and IoT malware staging, payload delivery, operator workspace exposure, and possible botnet recruitment."
 targets: ["Linux Servers and VPS Infrastructure","IoT and Embedded Devices","Internet-Exposed Edge Systems"]
-firstSeen: "2026-08"
-lastSeen: "2026-08"
+firstSeen: "2026-08-24"
+lastSeen: "2026-08-24"
 tools: ["Python SimpleHTTP Server","wget / curl Payload Delivery","screen Session Management","Architecture-Specific Linux ELF Payloads","nc Listener","VPS Cleaner / Process-Killing Script"]
 ttps: ["T1105 - Ingress Tool Transfer","T1059.004 - Unix Shell","T1204 - User Execution","T1071.001 - Web Protocols","T1070.004 - File and Directory Discovery / Indicator Removal on Host","T1562.001 - Impair Defenses"]
 tags: ["threat-intelligence","dfir","malware-analysis","linux","iot-botnet","exposed-infrastructure"]
