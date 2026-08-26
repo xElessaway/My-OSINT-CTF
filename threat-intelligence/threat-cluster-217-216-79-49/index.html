@@ -1,0 +1,761 @@
+<!DOCTYPE html><html lang="en"> <head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="description" content="Exposed staging, C2 and beacon artifact hosting, tunneling or proxy support, credential and system collection, web-facing exploitation testing, and possible post-compromise operator workspace management."><meta name="generator" content="Astro v5.18.1"><link rel="canonical" href="https://xelessaway.me/threat-intelligence/threat-cluster-217-216-79-49/"><!-- Open Graph / WhatsApp / Telegram / Discord / LinkedIn --><meta property="og:site_name" content="Ahmed Elessaway (xElessaway)"><meta property="og:title" content="Threat Cluster 217[.]216[.]79[.]49 | Threat Intelligence Dossier"><meta property="og:description" content="Exposed staging, C2 and beacon artifact hosting, tunneling or proxy support, credential and system collection, web-facing exploitation testing, and possible post-compromise operator workspace management."><meta property="og:type" content="article"><meta property="og:url" content="https://xelessaway.me/threat-intelligence/threat-cluster-217-216-79-49/"><meta property="og:image" content="https://xelessaway.me/logo-me.png"><meta property="og:image:secure_url" content="https://xelessaway.me/logo-me.png"><meta property="og:image:alt" content="Threat Cluster 217[.]216[.]79[.]49 | Threat Intelligence Dossier"><meta property="article:section" content="Threat Intelligence"><meta property="article:tag" content="threat-intelligence"><meta property="article:tag" content="dfir"><meta property="article:tag" content="malware-analysis"><meta property="article:tag" content="windows"><meta property="article:tag" content="c2-infrastructure"><meta property="article:tag" content="exposed-infrastructure"><meta property="article:tag" content="web-exploitation"><meta property="article:tag" content="credential-access"><!-- Twitter / X Card --><meta name="twitter:card" content="summary_large_image"><meta name="twitter:site" content="@ahmed_elessaway"><meta name="twitter:creator" content="@ahmed_elessaway"><meta name="twitter:title" content="Threat Cluster 217[.]216[.]79[.]49 | Threat Intelligence Dossier"><meta name="twitter:description" content="Exposed staging, C2 and beacon artifact hosting, tunneling or proxy support, credential and system collection, web-facing exploitation testing, and possible post-compromise operator workspace management."><meta name="twitter:image" content="https://xelessaway.me/logo-me.png"><meta name="twitter:image:alt" content="Threat Cluster 217[.]216[.]79[.]49 | Threat Intelligence Dossier"><link rel="icon" type="image/png" href="/logo-me.png"><link rel="apple-touch-icon" href="/logo-me.png"><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400..800&family=Hanken+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet"><link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&display=block" rel="stylesheet"><script data-goatcounter="https://xelessaway.goatcounter.com/count" async src="https://gc.zgo.at/count.js"></script><script>
+      (() => {
+        const savedTheme = localStorage.getItem("theme");
+        const theme = savedTheme === "dark" ? "dark" : "light";
+        document.documentElement.setAttribute("data-theme", theme);
+      })();
+    </script><title>Threat Cluster 217[.]216[.]79[.]49 | Threat Intelligence Dossier</title><style>.dossier-wide-container[data-astro-cid-necseomn]{max-width:1140px;width:100%;margin-inline:auto}.article-prose[data-astro-cid-necseomn]>h1:first-child{display:none}.article-status-pill[data-astro-cid-necseomn].tracking{background:#f59e0b1a;border-color:#f59e0b;color:#f59e0b}.article-status-pill[data-astro-cid-necseomn].tracking .pulse-dot[data-astro-cid-necseomn]{background:#f59e0b}[data-astro-cid-necseomn][data-theme=dark] .article-status-pill[data-astro-cid-necseomn].tracking{background:#f59e0b22;border-color:#fbbf24;color:#fbbf24}[data-astro-cid-necseomn][data-theme=dark] .article-status-pill[data-astro-cid-necseomn].tracking .pulse-dot[data-astro-cid-necseomn]{background:#fbbf24}.article-status-pill[data-astro-cid-necseomn].active{background:var(--secondary-soft);border-color:var(--secondary);color:var(--secondary)}.article-status-pill[data-astro-cid-necseomn].disrupted,.article-status-pill[data-astro-cid-necseomn].historic{background:var(--surface-panel);border-color:var(--line-soft);color:var(--text-soft)}.article-status-pill[data-astro-cid-necseomn].disrupted .pulse-dot[data-astro-cid-necseomn],.article-status-pill[data-astro-cid-necseomn].historic .pulse-dot[data-astro-cid-necseomn]{background:var(--text-soft)}
+</style>
+<link rel="stylesheet" href="/_astro/about.CVC_7FNF.css"></head> <body class="ops-root"> <a class="skip-link" href="#main-content">Skip to content</a> <header class="site-header"> <div class="shell-bar"> <div class="shell-left"> <button class="menu-toggle" type="button" aria-expanded="false" aria-controls="site-nav"> <span class="sr-only">Toggle navigation</span> <span></span> </button> <a class="brand-mark" href="/" aria-label="Ahmed Elessaway home"> <img src="/logo-me.png" alt="Ahmed Elessaway" class="brand-avatar"> <span class="brand-copy"> <strong>xElessaway</strong> <small>research portfolio</small> </span> </a> </div> <nav id="site-nav" class="site-nav" aria-label="Primary navigation"> <a class="nav-link" href="/"> Home </a><a class="nav-link" href="/blog/"> Research </a><a class="nav-link is-active" href="/threat-intelligence/"> Threat Intel </a><a class="nav-link" href="/ctf/"> Practice </a><a class="nav-link" href="/about/"> Profile </a> </nav> <div class="shell-right-actions"> <button class="theme-toggle-btn" type="button" id="theme-toggle" aria-label="Toggle light and dark theme" title="Toggle Theme"> <!-- Moon Icon for Dark Mode --> <svg class="theme-svg theme-icon-moon" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"> <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path> </svg> <!-- Sun Icon for Light Mode --> <svg class="theme-svg theme-icon-sun" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"> <circle cx="12" cy="12" r="5"></circle> <line x1="12" y1="1" x2="12" y2="3"></line> <line x1="12" y1="21" x2="12" y2="23"></line> <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line> <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line> <line x1="1" y1="12" x2="3" y2="12"></line> <line x1="21" y1="12" x2="23" y2="12"></line> <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line> <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line> </svg> </button> <a class="header-contact" href="/about/#contact">Connect</a> </div> </div> </header> <script type="module">const c=document.querySelector(".menu-toggle"),e=document.querySelector("#site-nav"),s=window.matchMedia("(min-width: 1100px)");if(c instanceof HTMLButtonElement&&e instanceof HTMLElement){const o=()=>{e.classList.remove("is-open"),c.setAttribute("aria-expanded","false")},t=()=>{s.matches&&o()};c.addEventListener("click",()=>{const n=e.classList.toggle("is-open");c.setAttribute("aria-expanded",String(n))}),e.querySelectorAll("a").forEach(n=>{n.addEventListener("click",()=>{o()})}),document.addEventListener("click",n=>{const a=n.target;!s.matches&&e.classList.contains("is-open")&&a instanceof Node&&!e.contains(a)&&!c.contains(a)&&o()}),"addEventListener"in s&&s.addEventListener("change",t),t()}const i=document.getElementById("theme-toggle");i?.addEventListener("click",()=>{const t=(document.documentElement.getAttribute("data-theme")||"light")==="dark"?"light":"dark";document.documentElement.setAttribute("data-theme",t),localStorage.setItem("theme",t)});</script> <main id="main-content" class="page-main">  <div class="article-dossier-container dossier-wide-container" data-astro-cid-necseomn> <!-- Top Back Navigation Bar --> <nav class="article-breadcrumb-bar" data-astro-cid-necseomn> <a href="/threat-intelligence/" class="article-back-link" data-astro-cid-necseomn> <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class aria-hidden="true"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg> <span data-astro-cid-necseomn>Back to Threat Intelligence Feed</span> </a> <span class="article-doc-id" data-astro-cid-necseomn>DOSSIER_ID: THREAT-CLUSTER-217-216-79-49</span> </nav> <!-- Unified Dossier Header Card --> <header class="article-dossier-header" data-astro-cid-necseomn> <div class="article-tape-sticker" aria-hidden="true" data-astro-cid-necseomn></div> <div class="article-meta-ribbon" data-astro-cid-necseomn> <span class="article-type-pill" data-astro-cid-necseomn>THREAT DOSSIER</span> <span class="article-status-pill active" data-astro-cid-necseomn> <span class="pulse-dot" aria-hidden="true" data-astro-cid-necseomn></span> ACTIVE </span> </div> <h1 class="article-title" data-astro-cid-necseomn>Threat Cluster 217[.]216[.]79[.]49</h1> <p class="article-lede" data-astro-cid-necseomn>Exposed staging, C2 and beacon artifact hosting, tunneling or proxy support, credential and system collection, web-facing exploitation testing, and possible post-compromise operator workspace management.</p> <div class="article-info-strip" data-astro-cid-necseomn> <div class="article-info-item" data-astro-cid-necseomn> <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class aria-hidden="true"><circle cx="12" cy="12" r="10"></circle><line x1="2" y1="12" x2="22" y2="12"></line><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path></svg> <span data-astro-cid-necseomn>Unknown / exposed Windows and web-oriented staging infrastructure</span> </div> <div class="article-info-item" data-astro-cid-necseomn> <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class aria-hidden="true"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg> <span data-astro-cid-necseomn>Active: 2026-08-26 &rarr; 2026-08-26</span> </div> <div class="article-info-item" data-astro-cid-necseomn> <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class aria-hidden="true"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path><path d="M9 12l2 2 4-4"></path></svg> <span data-astro-cid-necseomn>Aliases: 217216-8085 Exposed Windows Staging Node, Beacon-Chisel Mixed Staging Cluster</span> </div> </div> <div class="article-tags-wrap" data-astro-cid-necseomn> <span class="article-tag-chip" data-astro-cid-necseomn>#threat-intelligence</span><span class="article-tag-chip" data-astro-cid-necseomn>#dfir</span><span class="article-tag-chip" data-astro-cid-necseomn>#malware-analysis</span><span class="article-tag-chip" data-astro-cid-necseomn>#windows</span><span class="article-tag-chip" data-astro-cid-necseomn>#c2-infrastructure</span><span class="article-tag-chip" data-astro-cid-necseomn>#exposed-infrastructure</span><span class="article-tag-chip" data-astro-cid-necseomn>#web-exploitation</span><span class="article-tag-chip" data-astro-cid-necseomn>#credential-access</span> </div> </header> <!-- Main Dossier Manuscript --> <main class="article-manuscript-panel" data-astro-cid-necseomn> <div class="article-prose prose" data-astro-cid-necseomn> <h1 id="threat-cluster-21721679498085">Threat Cluster 217[.]216[.]79[.]49:8085</h1>
+<blockquote>
+<p>This dossier was generated from passive HTTP observation and static filename correlation. The endpoint was not logged into, exploited, modified, or used to submit data. Listed artifacts were not opened, downloaded, hashed, or executed.</p>
+</blockquote>
+<h3 id="evidence-coverage">Evidence Coverage</h3>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th>Metric</th><th>Value</th></tr></thead><tbody><tr><td>Root directory listing acquired</td><td>2 captures</td></tr><tr><td>Unique root-level entries observed</td><td>151</td></tr><tr><td>Entries added between captures</td><td>0</td></tr><tr><td>Entries removed between captures</td><td>0</td></tr><tr><td>Current exposure</td><td>Unauthenticated HTTP directory listing</td></tr><tr><td>Text / configuration artifacts acquired</td><td>0</td></tr><tr><td>Windows PE binaries acquired</td><td>0</td></tr><tr><td>Linux ELF binaries acquired</td><td>0</td></tr><tr><td>Artifact hashes computed from target host</td><td>0</td></tr><tr><td>Dynamic execution performed</td><td>No</td></tr><tr><td>Login, exploitation, modification, or submission performed</td><td>No</td></tr><tr><td>Exact listing persistence</td><td>Confirmed across two captures</td></tr></tbody></table>
+<h3 id="motivation--objectives">Motivation &#x26; Objectives</h3>
+<h3 id="strategic-motivation">Strategic Motivation</h3>
+<p>The host presents a persistent unauthenticated directory containing a heterogeneous collection of Windows, .NET, Java, PowerShell, PHP, ASP.NET, Python, and packaged artifacts. Filename semantics indicate a possible operator workspace or staging directory supporting beacon or C2 material, tunneling and proxying, credential or system collection, and public-facing application testing. These interpretations are triage hypotheses; artifact contents and runtime behavior were not acquired.</p>
+<h3 id="operational-objectives">Operational Objectives</h3>
+<ul>
+<li>
+<p><strong>C2 and Beacon Staging:</strong> Hosting artifacts named <code>beacon-v8</code>, <code>beacon-v9f</code>, <code>beacon-v9f-agent</code>, <code>beacon-v9g</code>, <code>beacon-v9h</code>, and <code>beacon-v10</code>, alongside <code>wh_beacon.txt</code>.</p>
+</li>
+<li>
+<p><strong>Tunneling and Remote Access:</strong> Maintaining Chisel-related files and <code>rdp_proxy.py</code>, <code>rdp_proxy2.py</code>, and <code>rdp_proxy3.py</code> for possible relay, pivot, or remote-access support.</p>
+</li>
+<li>
+<p><strong>Credential and System Collection:</strong> Exposing files named <code>tok_steal.ps1</code>, <code>tok2.ps1</code>, <code>regsave.ps1</code>, <code>regsave.txt</code>, <code>recv_hive.php</code>, and <code>jwks.json</code>, which warrant controlled review for token, registry, hive, or authentication-material handling.</p>
+</li>
+<li>
+<p><strong>Web-Facing Collection and Proxying:</strong> Hosting PHP and ASP.NET handlers including <code>api-proxy.php</code>, <code>collect.php</code>, <code>recv.php</code>, <code>recv_hive.php</code>, <code>proxy.php</code>, <code>redirect_ssrf.php</code>, <code>rfi_check.php</code>, and <code>relay.aspx</code>.</p>
+</li>
+<li>
+<p><strong>Exploit and Reconnaissance Testing:</strong> Exposing <code>Exploit.class</code>, <code>cf_probe/</code>, <code>inet_probe.txt</code>, <code>probe-callao.txt</code>, <code>probe789</code>, and CORS-labelled proof-of-concept pages.</p>
+</li>
+<li>
+<p><strong>Windows/.NET and Java Payload Staging:</strong> Maintaining <code>.exe</code>, <code>.dll</code>, <code>.cs</code>, <code>.ps1</code>, <code>.war</code>, <code>.aspx</code>, <code>.pkg</code>, and <code>.cab</code> artifacts in a publicly indexed location.</p>
+</li>
+</ul>
+<h3 id="inferred-target-profile">Inferred Target Profile</h3>
+<ul>
+<li>
+<p>Enterprise Windows workstations and servers</p>
+</li>
+<li>
+<p>Internet-facing web and application infrastructure</p>
+</li>
+<li>
+<p>Remote access, RDP, and perimeter systems</p>
+</li>
+<li>
+<p>Cloud, identity, token, and authentication services</p>
+</li>
+<li>
+<p>Systems exposed to unauthorized payload staging or web-handler access</p>
+</li>
+</ul>
+<h3 id="key-operational-findings">Key Operational Findings</h3>
+<ul>
+<li>
+<p>Persistent unauthenticated directory listing on <code>217[.]216[.]79[.]49:8085</code>.</p>
+</li>
+<li>
+<p>Exactly 151 root entries were present in both the prior and current captures.</p>
+</li>
+<li>
+<p>No additions or removals were detected between the two captures.</p>
+</li>
+<li>
+<p>Beacon-like artifact families were publicly listed, including <code>beacon-v8</code>, <code>beacon-v9f</code>, <code>beacon-v9f-agent</code>, and <code>beacon-v10</code>.</p>
+</li>
+<li>
+<p>Chisel tunneling artifacts and multiple RDP proxy scripts were publicly listed.</p>
+</li>
+<li>
+<p>PowerShell and server-side files were named for token, registry, hive, proxy, SSRF, RFI, and collection functions.</p>
+</li>
+<li>
+<p>Java, .NET, Windows executable, DLL, package, and ASP.NET artifacts were present.</p>
+</li>
+<li>
+<p>Certificate/key-like files <code>sipro4.pem</code> and <code>sipro_script.pem</code> were publicly listed by name.</p>
+</li>
+<li>
+<p>The host most closely resembles a Windows-oriented staging node in the broad operational space of the supplied <code>93[.]152[.]223[.]39</code> and <code>101[.]42[.]255[.]92</code> dossiers.</p>
+</li>
+<li>
+<p>No direct hash, URL, certificate, credential, or artifact-content link to the supplied <code>150[.]241[.]65[.]250</code> or <code>194[.]238[.]57[.]124</code> clusters was established.</p>
+</li>
+<li>
+<p>No direct evidence of successful victim compromise, active C2, or execution of the listed artifacts was acquired.</p>
+</li>
+</ul>
+<h3 id="credentials-keys--tokens-redacted">Credentials, Keys &#x26; Tokens (Redacted)</h3>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th>Risk</th><th>Type</th><th>Redacted Value</th><th>Source / Layer</th></tr></thead><tbody><tr><td><strong>High / Unconfirmed</strong></td><td>Potential private key or certificate material</td><td><code>[NOT ACQUIRED — sipro4.pem AND sipro_script.pem WERE ONLY OBSERVED BY FILENAME]</code></td><td>Root directory listing / L0</td></tr><tr><td><strong>High / Unconfirmed</strong></td><td>Potential token or credential collection material</td><td><code>[NOT ACQUIRED — tok_steal.ps1, tok2.ps1, regsave.ps1, recv_hive.php, AND jwks.json WERE ONLY OBSERVED BY FILENAME]</code></td><td>Root directory listing / L0</td></tr><tr><td><strong>Medium / Unconfirmed</strong></td><td>Potential authentication, database, or session material</td><td><code>[NOT ACQUIRED — RELATED .txt, .dat, .json, AND SERVER-SIDE FILES REQUIRE AUTHORIZED REVIEW]</code></td><td>Root directory listing / L0</td></tr></tbody></table>
+<h3 id="verified-indicators">Verified Indicators</h3>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th>Type</th><th>Defanged Value / Hash</th><th>Context</th><th>Confidence</th></tr></thead><tbody><tr><td><strong>Investigated Host</strong></td><td><code>217[.]216[.]79[.]49</code></td><td>User-supplied investigated host</td><td>High (observed)</td></tr><tr><td><strong>Service Endpoint</strong></td><td><code>217[.]216[.]79[.]49:8085</code></td><td>Persistent unauthenticated HTTP directory listing</td><td>High (observed)</td></tr><tr><td><strong>HTTP Title</strong></td><td><code>Directory listing for /</code></td><td>Returned by the investigated endpoint</td><td>High (observed)</td></tr><tr><td><strong>Root Listing Size</strong></td><td><code>151</code> entries</td><td>Exact count in prior and current captures</td><td>High (computed)</td></tr><tr><td><strong>Beacon Filename Pattern</strong></td><td><code>beacon-v8</code>, <code>beacon-v9f</code>, <code>beacon-v9f-agent</code>, <code>beacon-v9g</code>, <code>beacon-v9h</code>, <code>beacon-v10</code></td><td>Publicly listed root artifacts</td><td>High (filename observed)</td></tr><tr><td><strong>Tunneling Filename Pattern</strong></td><td><code>chisel.exe</code>, <code>chisel_v1101.exe</code>, <code>chisel_1.10.1_windows_amd64.gz</code>, <code>chisel_packed.dat</code>, <code>chisel_win.dat</code></td><td>Publicly listed root artifacts</td><td>High (filename observed)</td></tr><tr><td><strong>Proxy Filename Pattern</strong></td><td><code>rdp_proxy.py</code>, <code>rdp_proxy2.py</code>, <code>rdp_proxy3.py</code>, <code>proxy.php</code>, <code>api-proxy.php</code></td><td>Publicly listed root artifacts</td><td>High (filename observed)</td></tr><tr><td><strong>Credential/System Collection Pattern</strong></td><td><code>tok_steal.ps1</code>, <code>tok2.ps1</code>, <code>regsave.ps1</code>, <code>regsave.txt</code>, <code>recv_hive.php</code>, <code>jwks.json</code></td><td>Publicly listed root artifacts</td><td>High (filename observed)</td></tr><tr><td><strong>Web Handler Pattern</strong></td><td><code>collect.php</code>, <code>recv.php</code>, <code>recv_hive.php</code>, <code>redirect_ssrf.php</code>, <code>rfi_check.php</code>, <code>relay.aspx</code></td><td>Publicly listed root artifacts</td><td>High (filename observed)</td></tr><tr><td><strong>Exploit/Probe Pattern</strong></td><td><code>Exploit.class</code>, <code>cf_probe/</code>, <code>inet_probe.txt</code>, <code>probe-callao.txt</code>, <code>probe789</code></td><td>Publicly listed root artifacts</td><td>High (filename observed)</td></tr><tr><td><strong>Key/Certificate Filename Pattern</strong></td><td><code>sipro4.pem</code>, <code>sipro_script.pem</code></td><td>Publicly listed root artifacts; contents not acquired</td><td>High (filename observed)</td></tr><tr><td><strong>Related Cluster</strong></td><td><code>150[.]241[.]65[.]250:889</code></td><td>Supplied dossier describes separate Linux/IoT staging infrastructure</td><td>High (user-supplied evidence)</td></tr><tr><td><strong>Related Historical Infrastructure</strong></td><td><code>94[.]154[.]43[.]249</code></td><td>Present in supplied 150/194 cluster evidence; not observed on current host</td><td>Medium (user-supplied correlation)</td></tr></tbody></table>
+<h3 id="windows-lnk-findings">Windows LNK Findings</h3>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th>File</th><th>Relative Path</th><th>Working Directory</th><th>Arguments / Command Hints</th></tr></thead><tbody><tr><td><em>None observed in the directory listing</em></td><td></td><td></td><td></td></tr></tbody></table>
+<p>The absence of a visible <code>.lnk</code> filename is limited to the root listing. No descendants or file contents were acquired.</p>
+<h3 id="pe-candidates">PE Candidates</h3>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th>Candidate</th><th>Source</th><th>Architecture</th><th>Entry Point</th><th>Suspicious Sections</th><th>SHA-256</th></tr></thead><tbody><tr><td><code>Aplicativo.exe</code>, <code>c.exe</code>, <code>cs.exe</code>, <code>gp.exe</code>, <code>hook_fcc4.exe</code>, <code>mssync.exe</code>, <code>svcdiag.exe</code>, <code>tlu.exe</code>, <code>update.exe</code>, <code>winaux.exe</code>, and other <code>.exe</code> names</td><td>Root directory listing</td><td>Not determined</td><td>Not determined</td><td>Not determined</td><td>Not available</td></tr><tr><td><code>DnsClient.dll</code>, <code>MongoDB.*.dll</code>, <code>r.dll</code>, <code>SharpCompress.dll</code>, <code>System.*.dll</code>, and other <code>.dll</code> names</td><td>Root directory listing</td><td>Not determined</td><td>Not determined</td><td>Not determined</td><td>Not available</td></tr></tbody></table>
+<p>No PE file was acquired or statically parsed. The entries above are <strong>PE candidates by filename extension only</strong>, not confirmed malicious binaries.</p>
+<h3 id="deep-technical-threat-analysis">Deep Technical Threat Analysis</h3>
+<h3 id="1-executive-technical-assessment">1. Executive Technical Assessment</h3>
+<p>The endpoint is best assessed as <strong>high-priority suspicious exposed infrastructure with a Windows/.NET and web-oriented staging profile</strong>. The direct evidence is a persistent unauthenticated directory listing containing beacon-like filenames, tunneling and proxy artifacts, credential/system-collection-labelled scripts, server-side request handlers, and exploit/probe-labelled files.</p>
+<p>The evidence supports a public staging or operator-workspace role, but it does not prove that every file is malicious, that the host is compromised, that the listed files were executed, or that the host is controlled by the same operator as any supplied cluster.</p>
+<h3 id="2-artifact-inventory">2. Artifact Inventory</h3>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th>Artifact Family</th><th>Type</th><th>Size</th><th>SHA-256</th><th>Notes</th></tr></thead><tbody><tr><td><code>beacon-v8</code>, <code>beacon-v9f</code>, <code>beacon-v9f-agent</code>, <code>beacon-v9g</code>, <code>beacon-v9h</code>, <code>beacon-v10</code></td><td>Unknown executable or payload artifacts</td><td>Not acquired</td><td>Not available</td><td>Names suggest beacon or C2-related staging; framework identity unconfirmed.</td></tr><tr><td><code>chisel.exe</code>, <code>chisel_v1101.exe</code>, <code>chisel_1.10.1_windows_amd64.gz</code></td><td>Windows executable/archive candidates</td><td>Not acquired</td><td>Not available</td><td>Names suggest tunneling or relay tooling; behavior unverified.</td></tr><tr><td><code>rdp_proxy.py</code>, <code>rdp_proxy2.py</code>, <code>rdp_proxy3.py</code></td><td>Python scripts</td><td>Not acquired</td><td>Not available</td><td>Names suggest RDP proxy or relay functions.</td></tr><tr><td><code>tok_steal.ps1</code>, <code>tok2.ps1</code>, <code>regsave.ps1</code></td><td>PowerShell script candidates</td><td>Not acquired</td><td>Not available</td><td>Names suggest token or registry collection; no script content acquired.</td></tr><tr><td><code>collect.php</code>, <code>recv.php</code>, <code>recv_hive.php</code>, <code>proxy.php</code>, <code>redirect_ssrf.php</code>, <code>rfi_check.php</code>, <code>relay.aspx</code></td><td>Server-side script candidates</td><td>Not acquired</td><td>Not available</td><td>Could support collection, proxying, webshell, SSRF, or RFI testing.</td></tr><tr><td><code>Exploit.class</code>, <code>hapi.war</code></td><td>Java class/archive candidates</td><td>Not acquired</td><td>Not available</td><td>Java-related exploit or application staging is possible but unconfirmed.</td></tr><tr><td><code>sipro4.pem</code>, <code>sipro_script.pem</code></td><td>Certificate/private-key candidates</td><td>Not acquired</td><td>Not available</td><td>Treat as sensitive until contents and ownership are established.</td></tr><tr><td><code>Aplicativo.exe</code>, <code>c.exe</code>, <code>cs.exe</code>, <code>gp.exe</code>, <code>hook_fcc4.exe</code>, <code>mssync.exe</code>, <code>svcdiag.exe</code>, <code>tlu.exe</code>, <code>update.exe</code>, <code>winaux.exe</code></td><td>Windows PE candidates</td><td>Not acquired</td><td>Not available</td><td>Filename-based candidates only; no static analysis performed.</td></tr><tr><td>Remaining listed objects</td><td>Mixed text, data, package, archive, web, and directory entries</td><td>Not acquired</td><td>Not available</td><td>Root listing contained 151 total entries.</td></tr></tbody></table>
+<h3 id="3-script-and-artifact-behaviors">3. Script and Artifact Behaviors</h3>
+<p>No script or binary content was acquired from the endpoint. The following behaviors are therefore <strong>filename-based analytic hypotheses</strong> rather than verified execution results:</p>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th>Behavior</th><th>Evidence</th><th>Assessment</th></tr></thead><tbody><tr><td>Beacon/C2 staging</td><td>Multiple <code>beacon-*</code> filenames and <code>wh_beacon.txt</code></td><td>Possible payload or C2 artifact hosting; framework and activity unconfirmed.</td></tr><tr><td>Network tunneling</td><td>Chisel executable, compressed package, and packed data names</td><td>Possible tunneling, pivoting, or relay support; runtime behavior unverified.</td></tr><tr><td>RDP proxying</td><td><code>rdp_proxy.py</code>, <code>rdp_proxy2.py</code>, <code>rdp_proxy3.py</code></td><td>Possible remote-access relay capability; content not acquired.</td></tr><tr><td>Credential or token collection</td><td><code>tok_steal.ps1</code>, <code>tok2.ps1</code>, <code>regsave.ps1</code>, <code>recv_hive.php</code>, <code>jwks.json</code></td><td>Potential credential-access material; no secrets were observed because files were not acquired.</td></tr><tr><td>Server-side collection or proxying</td><td><code>collect.php</code>, <code>recv.php</code>, <code>recv_hive.php</code>, <code>api-proxy.php</code>, <code>proxy.php</code></td><td>Potential collection or relay endpoints; no requests were sent to these files.</td></tr><tr><td>SSRF/RFI or application testing</td><td><code>redirect_ssrf.php</code>, <code>rfi_check.php</code>, <code>Exploit.class</code>, <code>cf_probe/</code>, CORS proof-of-concept names</td><td>Reconnaissance or testing theme; successful exploitation is not established.</td></tr><tr><td>Persistent public exposure</td><td>Identical 151-entry listings in two captures</td><td>Confirmed exposure persistence; no inference about process persistence.</td></tr></tbody></table>
+<h3 id="4-network-indicators">4. Network Indicators</h3>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th>Indicator ID</th><th>URL / Endpoint</th><th>Associated Evidence</th></tr></thead><tbody><tr><td>NI-001</td><td><code>hxxp://217[.]216[.]79[.]49:8085/</code></td><td>Direct passive acquisition; unauthenticated directory listing.</td></tr><tr><td>NI-002</td><td><code>hxxp://217[.]216[.]79[.]49:8085/beacon-v10</code></td><td>Filename observed in root listing; artifact not acquired.</td></tr><tr><td>NI-003</td><td><code>hxxp://217[.]216[.]79[.]49:8085/chisel[.]exe</code></td><td>Filename observed in root listing; artifact not acquired.</td></tr><tr><td>NI-004</td><td><code>hxxp://217[.]216[.]79[.]49:8085/rdp_proxy[.]py</code></td><td>Filename observed in root listing; artifact not acquired.</td></tr><tr><td>NI-005</td><td><code>hxxp://217[.]216[.]79[.]49:8085/tok_steal[.]ps1</code></td><td>Filename observed in root listing; artifact not acquired.</td></tr><tr><td>NI-006</td><td><code>hxxp://217[.]216[.]79[.]49:8085/recv_hive[.]php</code></td><td>Filename observed in root listing; artifact not acquired.</td></tr><tr><td>NI-007</td><td><code>hxxp://217[.]216[.]79[.]49:8085/redirect_ssrf[.]php</code></td><td>Filename observed in root listing; artifact not acquired.</td></tr><tr><td>NI-008</td><td><code>hxxp://217[.]216[.]79[.]49:8085/sipro4[.]pem</code></td><td>Filename observed in root listing; contents not acquired.</td></tr><tr><td>NI-009</td><td><code>hxxp://217[.]216[.]79[.]49:8085/sipro_script[.]pem</code></td><td>Filename observed in root listing; contents not acquired.</td></tr><tr><td>NI-010</td><td><code>hxxp://217[.]216[.]79[.]49:8085/cf_probe/</code></td><td>Directory observed in root listing; descendants not acquired.</td></tr><tr><td>NI-011</td><td><code>hxxp://217[.]216[.]79[.]49:8085/data/</code></td><td>Directory observed in root listing; descendants not acquired.</td></tr><tr><td>NI-012</td><td><code>hxxp://217[.]216[.]79[.]49:8085/dl/</code></td><td>Directory observed in root listing; descendants not acquired.</td></tr></tbody></table>
+<p>No additional remote IP, domain, callback, or C2 endpoint was established from the current host. The related <code>94[.]154[.]43[.]249</code> indicator belongs to supplied 150/194 cluster evidence and is not a current-host observation.</p>
+<h3 id="5-cross-cluster-correlation">5. Cross-Cluster Correlation</h3>
+<p>The current host most closely resembles the supplied Windows-oriented staging context represented by the <code>93[.]152[.]223[.]39</code> and <code>101[.]42[.]255[.]92</code> dossiers. The overlap consists of beacon/C2 terminology, Windows payload or lure staging, proxying, credential-access themes, and exposure of operational infrastructure. This is thematic correlation only; the current host’s files were not acquired and no shared hashes, URLs, certificates, credentials, or artifact contents were identified.</p>
+<p>The supplied <code>150[.]241[.]65[.]250</code> dossier documents a separate Linux/IoT staging node with <code>raul.*</code> payloads, historical <code>pito.*</code> execution, shell history, and a port-889 HTTP service. The current host does not visibly expose <code>raul.*</code>, <code>pito.*</code>, <code>bot.i686</code>, <code>gg11</code>, or <code>dp.sh</code> names. The relationship between the two hosts is therefore limited to a broad pattern of exposed operational staging infrastructure.</p>
+<p>The supplied <code>194[.]238[.]57[.]124</code> dossier contains <code>pito.*</code>, <code>gg11</code>, <code>dp.sh</code>, and multi-architecture Linux payload evidence. None of those filename families was observed in the current root listing. No direct technical relationship is established.</p>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th>Correlation</th><th>Evidence</th><th>Confidence</th></tr></thead><tbody><tr><td>Shared Windows-oriented staging model with <code>93[.]152[.]223[.]39</code></td><td>Beacon, exploit/probe, web-handler, and credential-access naming themes</td><td>Medium</td></tr><tr><td>Shared operational staging model with <code>150[.]241[.]65[.]250</code></td><td>Public directory exposure and apparent tool workspace</td><td>Low-to-medium</td></tr><tr><td>Shared Linux multi-architecture payload family with <code>194[.]238[.]57[.]124</code></td><td>No <code>pito.*</code>, <code>gg11</code>, or <code>dp.sh</code> names observed on current host</td><td>Low / not established</td></tr><tr><td>Exact ownership or operator identity</td><td>No shared hash, URL, certificate, credential, or artifact content</td><td>Not established</td></tr><tr><td>Active C2 relationship</td><td>No callback, traffic, execution, or runtime evidence</td><td>Not established</td></tr></tbody></table>
+<h3 id="6-pe-and-lnk-assessment">6. PE and LNK Assessment</h3>
+<p>The root listing contains multiple <code>.exe</code>, <code>.dll</code>, <code>.cab</code>, <code>.pkg</code>, and related Windows-oriented filenames, but no PE file was downloaded or parsed. They remain <strong>PE candidates by filename extension only</strong>. No <code>.lnk</code> filename was observed in the root listing. This conclusion is limited because descendants and file contents were not acquired.</p>
+<h3 id="7-secrets-and-sensitive-material">7. Secrets and Sensitive Material</h3>
+<p>The public listing exposes filenames that may represent private keys, certificates, tokens, registry material, authentication data, or collection endpoints. In particular, <code>sipro4.pem</code>, <code>sipro_script.pem</code>, <code>jwks.json</code>, <code>tok_steal.ps1</code>, <code>tok2.ps1</code>, <code>regsave.ps1</code>, and <code>recv_hive.php</code> should be treated as sensitive indicators. No actual key, token, password, cookie, or credential value was acquired or reproduced in this dossier.</p>
+<p>If the infrastructure belongs to the organization, all credentials, keys, tokens, cookies, and certificates found during authorized acquisition should be rotated through a trusted administrative path, with sessions invalidated and recent use reviewed.</p>
+<h3 id="8-recommended-defensive-actions">8. Recommended Defensive Actions</h3>
+<ol>
+<li>
+<p>Restrict public access to <code>217[.]216[.]79[.]49:8085</code> if the host is organizationally controlled, while preserving web-server, reverse-proxy, firewall, authentication, process, and cloud logs.</p>
+</li>
+<li>
+<p>Preserve a forensic image and volatile state before deleting or modifying individual artifacts; capture directory timestamps, process/socket state, scheduled tasks, services, web-server configuration, and access logs.</p>
+</li>
+<li>
+<p>Hunt endpoint, proxy, DNS, firewall, and identity telemetry for <code>217[.]216[.]79[.]49</code>, port <code>8085</code>, Chisel process names, RDP proxy activity, beacon-like process trees, PowerShell token or registry access, and requests to the exposed server-side handlers.</p>
+</li>
+<li>
+<p>Treat any private keys, tokens, cookies, database strings, cloud credentials, or authentication material discovered during authorized acquisition as compromised and rotate them.</p>
+</li>
+<li>
+<p>Acquire and statically analyze the smallest authorized set of suspicious scripts, certificate/key files, PE candidates, PHP/ASP.NET handlers, and Chisel-related artifacts; compute SHA-256 hashes and compare them with the supplied cluster evidence.</p>
+</li>
+<li>
+<p>Do not execute acquired binaries or scripts on production systems. Use an isolated analysis environment with no trusted credentials and controlled network access.</p>
+</li>
+<li>
+<p>If the host is not owned by the organization, do not attempt login, exploitation, upload, execution, or bulk acquisition; report the persistent public exposure through the relevant provider, CERT, abuse desk, or authorized incident-response channel.</p>
+</li>
+</ol>
+<h2 id="conclusion">Conclusion</h2>
+<p>The endpoint at <code>217[.]216[.]79[.]49:8085</code> continues to expose a persistent unauthenticated directory containing 151 mixed Windows, .NET, Java, PowerShell, PHP, ASP.NET, package, and data entries. The concentration of beacon-like names, Chisel artifacts, RDP proxy scripts, credential/system-collection-labelled files, web handlers, and exploit/probe names supports a <strong>high-priority suspicious exposed-infrastructure</strong> assessment.</p>
+<p>The evidence is sufficient to justify containment, preservation, credential review, and targeted threat hunting if the host is organizationally controlled. It is not sufficient to confirm active C2, successful exploitation, victim compromise, maliciousness of every listed artifact, or common ownership with the supplied Linux/IoT <code>150[.]241[.]65[.]250</code> and <code>194[.]238[.]57[.]124</code> clusters.</p> </div> <!-- Companion Reports (if any) -->  <!-- Dossier Footer & Author Monogram --> <footer class="article-dossier-footer" data-astro-cid-necseomn> <div class="article-author-card" data-astro-cid-necseomn> <img src="/logo-me.png" alt="Ahmed Elessaway (xElessaway)" class="article-author-avatar-img" data-astro-cid-necseomn> <div class="article-author-info" data-astro-cid-necseomn> <p class="eyebrow" data-astro-cid-necseomn>Investigator / Author</p> <h3 class="article-author-name" data-astro-cid-necseomn>Ahmed Elessaway (xElessaway)</h3> <p class="article-author-bio" data-astro-cid-necseomn>
+Cybersecurity researcher specializing in DFIR, threat intelligence, and OSINT investigation methodologies.
+</p> <div class="article-author-links" data-astro-cid-necseomn> <a href="https://www.linkedin.com/in/ahmedelessaway/" target="_blank" rel="noreferrer" class="author-social-pill" data-astro-cid-necseomn> <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="currentColor" class aria-hidden="true"><path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z"></path></svg> <span data-astro-cid-necseomn>LinkedIn</span> </a><a href="https://x.com/ahmed_elessaway" target="_blank" rel="noreferrer" class="author-social-pill" data-astro-cid-necseomn> <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="currentColor" class aria-hidden="true"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"></path></svg> <span data-astro-cid-necseomn>X</span> </a><a href="https://xelessaway.medium.com/" target="_blank" rel="noreferrer" class="author-social-pill" data-astro-cid-necseomn> <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="currentColor" class aria-hidden="true"><path d="M13.54 12a6.8 6.8 0 01-6.77 6.82A6.8 6.8 0 010 12a6.8 6.8 0 016.77-6.82A6.8 6.8 0 0113.54 12zM20.96 12c0 3.54-1.51 6.42-3.38 6.42-1.87 0-3.39-2.88-3.39-6.42s1.52-6.42 3.39-6.42 3.38 2.88 3.38 6.42M24 12c0 3.17-.53 5.75-1.19 5.75-.66 0-1.19-2.58-1.19-5.75s.53-5.75 1.19-5.75C23.47 6.25 24 8.83 24 12z"></path></svg> <span data-astro-cid-necseomn>Medium</span> </a> </div> </div> </div> <div class="article-nav-actions" data-astro-cid-necseomn> <a href="/threat-intelligence/" class="button button-primary" data-astro-cid-necseomn> <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class aria-hidden="true"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
+Back to Dossiers Feed
+</a> <a href="/blog/" class="button button-ghost" data-astro-cid-necseomn>
+Browse Research Archive
+<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class aria-hidden="true"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg> </a> </div> </footer> </main> </div>  </main> <footer class="site-footer"> <div class="container footer-grid"> <div class="footer-brand-wrap"> <a class="footer-brand" href="/"> <img src="/logo-me.png" alt="Ahmed Elessaway" class="footer-avatar"> <span>xElessaway</span> </a> <p class="footer-copy">Field notes, investigations, and practical security research.</p> </div> <div class="footer-links footer-links-inline"> <a href="/" class="footer-nav-link">Home</a><a href="/blog/" class="footer-nav-link">Research</a><a href="/threat-intelligence/" class="footer-nav-link">Threat Intel</a><a href="/ctf/" class="footer-nav-link">Practice</a><a href="/about/" class="footer-nav-link">Profile</a> </div> <div class="footer-links footer-links-inline footer-links-right"> <a href="https://www.linkedin.com/in/ahmedelessaway/" target="_blank" rel="noreferrer" class="footer-social-link" title="LinkedIn"> <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="currentColor" class aria-hidden="true"><path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z"></path></svg> <span>LinkedIn</span> </a><a href="https://x.com/ahmed_elessaway" target="_blank" rel="noreferrer" class="footer-social-link" title="X"> <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="currentColor" class aria-hidden="true"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"></path></svg> <span>X</span> </a><a href="https://xelessaway.medium.com/" target="_blank" rel="noreferrer" class="footer-social-link" title="Medium"> <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="currentColor" class aria-hidden="true"><path d="M13.54 12a6.8 6.8 0 01-6.77 6.82A6.8 6.8 0 010 12a6.8 6.8 0 016.77-6.82A6.8 6.8 0 0113.54 12zM20.96 12c0 3.54-1.51 6.42-3.38 6.42-1.87 0-3.39-2.88-3.39-6.42s1.52-6.42 3.39-6.42 3.38 2.88 3.38 6.42M24 12c0 3.17-.53 5.75-1.19 5.75-.66 0-1.19-2.58-1.19-5.75s.53-5.75 1.19-5.75C23.47 6.25 24 8.83 24 12z"></path></svg> <span>Medium</span> </a> </div> </div> </footer> <dialog class="image-lightbox" data-image-lightbox aria-label="Expanded image viewer"> <button class="image-lightbox-close" type="button" data-image-lightbox-close aria-label="Close image viewer">
+Close
+</button> <img class="image-lightbox-media" data-image-lightbox-media alt=""> <p class="image-lightbox-caption" data-image-lightbox-caption hidden></p> </dialog> <script>
+      const lightbox = document.querySelector("[data-image-lightbox]");
+      const lightboxMedia = lightbox?.querySelector("[data-image-lightbox-media]");
+      const lightboxCaption = lightbox?.querySelector("[data-image-lightbox-caption]");
+      const lightboxClose = lightbox?.querySelector("[data-image-lightbox-close]");
+
+      const isZoomableImage = (element) =>
+        element instanceof HTMLImageElement &&
+        (element.matches(".prose img") || element.matches(".challenge-image") || element.hasAttribute("data-zoomable-image"));
+
+      const setZoomableState = () => {
+        document.querySelectorAll(".prose img, .challenge-image, img[data-zoomable-image]").forEach((element) => {
+          if (element instanceof HTMLImageElement) {
+            element.tabIndex = 0;
+            element.setAttribute("role", "button");
+            element.setAttribute("aria-haspopup", "dialog");
+          }
+        });
+      };
+
+      const openLightbox = (image) => {
+        if (!(lightbox instanceof HTMLDialogElement) || !(lightboxMedia instanceof HTMLImageElement)) {
+          return;
+        }
+
+        lightboxMedia.src = image.currentSrc || image.src;
+        lightboxMedia.alt = image.alt || "";
+
+        if (lightboxCaption instanceof HTMLElement) {
+          const caption = image.alt?.trim();
+          lightboxCaption.textContent = caption ?? "";
+          lightboxCaption.hidden = !caption;
+        }
+
+        lightbox.showModal();
+      };
+
+      const closeLightbox = () => {
+        if (lightbox instanceof HTMLDialogElement && lightbox.open) {
+          lightbox.close();
+        }
+      };
+
+      document.addEventListener("click", (event) => {
+        const target = event.target;
+
+        if (target instanceof Element) {
+          const image = target.closest(".prose img, .challenge-image, img[data-zoomable-image]");
+
+          if (isZoomableImage(image)) {
+            event.preventDefault();
+            openLightbox(image);
+            return;
+          }
+        }
+
+        if (target === lightbox || target === lightboxClose) {
+          closeLightbox();
+        }
+      });
+
+      document.addEventListener("keydown", (event) => {
+        const target = event.target;
+
+        if ((event.key === "Enter" || event.key === " ") && isZoomableImage(target)) {
+          event.preventDefault();
+          openLightbox(target);
+        }
+      });
+
+      const setupCollapsibleTables = () => {
+        document.querySelectorAll(".prose table").forEach((table) => {
+          if (!(table instanceof HTMLTableElement) || table.dataset.collapsedInitialized) {
+            return;
+          }
+          table.dataset.collapsedInitialized = "true";
+
+          const rows = table.querySelectorAll("tbody tr");
+          const rowCount = rows.length;
+
+          // Only collapse tables that have more than 10 rows
+          if (rowCount <= 10) {
+            // Still ensure responsive wrapper if not already present
+            const existingWrap = table.closest(".table-responsive-wrap, .table-collapse-wrap");
+            if (!existingWrap) {
+              const resWrap = document.createElement("div");
+              resWrap.className = "table-responsive-wrap";
+              table.parentNode?.insertBefore(resWrap, table);
+              resWrap.appendChild(table);
+            }
+            return;
+          }
+
+          // Build collapsible container
+          const collapseWrap = document.createElement("div");
+          collapseWrap.className = "table-collapse-wrap";
+
+          const viewport = document.createElement("div");
+          viewport.className = "table-collapse-viewport is-collapsed";
+
+          const resWrap = document.createElement("div");
+          resWrap.className = "table-responsive-wrap";
+
+          const fadeOverlay = document.createElement("div");
+          fadeOverlay.className = "table-fade-overlay";
+
+          const toggleBar = document.createElement("div");
+          toggleBar.className = "table-toggle-bar";
+
+          const toggleBtn = document.createElement("button");
+          toggleBtn.type = "button";
+          toggleBtn.className = "table-toggle-btn";
+          toggleBtn.setAttribute("aria-expanded", "false");
+          toggleBtn.innerHTML = `
+            <span class="table-doodle-stamp">
+              <span class="pulse-dot" aria-hidden="true"></span>
+              <span class="table-toggle-label">SHOW ALL ${rowCount} RECORDS</span>
+            </span>
+            <svg class="table-doodle-chevron" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <path d="M6 9l6 6 6-6"></path>
+            </svg>
+          `;
+
+          toggleBtn.addEventListener("click", () => {
+            const isCollapsed = viewport.classList.toggle("is-collapsed");
+            const label = toggleBtn.querySelector(".table-toggle-label");
+            if (isCollapsed) {
+              toggleBtn.classList.remove("is-expanded");
+              toggleBtn.setAttribute("aria-expanded", "false");
+              if (label) label.textContent = `SHOW ALL ${rowCount} RECORDS`;
+              collapseWrap.scrollIntoView({ behavior: "smooth", block: "nearest" });
+            } else {
+              toggleBtn.classList.add("is-expanded");
+              toggleBtn.setAttribute("aria-expanded", "true");
+              if (label) label.textContent = `COLLAPSE TABLE (${rowCount} RECORDS)`;
+            }
+          });
+
+          toggleBar.appendChild(toggleBtn);
+
+          // Insert structure around table
+          table.parentNode?.insertBefore(collapseWrap, table);
+          resWrap.appendChild(table);
+          viewport.appendChild(resWrap);
+          viewport.appendChild(fadeOverlay);
+          collapseWrap.appendChild(viewport);
+          collapseWrap.appendChild(toggleBar);
+        });
+      };
+
+      setZoomableState();
+      setupCollapsibleTables();
+      document.addEventListener("astro:page-load", () => {
+        setZoomableState();
+        setupCollapsibleTables();
+      });
+    </script> </body> </html> 
