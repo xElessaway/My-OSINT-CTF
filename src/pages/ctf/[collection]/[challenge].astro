@@ -103,6 +103,7 @@ const promptHtml = await marked.parse(entry.data.prompt || "");
           challenge={entry.slug}
           passwordFormat={entry.data.passwordFormat}
           answerHashes={entry.data.answerHashes}
+          acceptedAliases={entry.data.acceptedAliases}
           hint={entry.data.hint}
         />
       </div>

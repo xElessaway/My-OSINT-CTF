@@ -7,7 +7,10 @@ Displaying a fake error or verification prompt Silently copying a malicious comm
 It's dangerous precisely because the user executes the payload themselves, bypassing many endpoint controls."
 passwordFormat: "***************************.***"
 hint: ""
-answerHashes: ["shaileshvisionaryastrologer.com"]
+answerHashes:
+  - "052d626dbd9f08a52360f90656698fd63ba955f2866231a8989ca99b1f657d76"
+acceptedAliases:
+  - "shaileshvisionaryastrologer.com"
 order: 1
 ---
 

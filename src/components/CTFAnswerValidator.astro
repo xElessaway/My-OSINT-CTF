@@ -4,10 +4,11 @@ interface Props {
   challenge: string;
   passwordFormat: string;
   answerHashes: string[];
+  acceptedAliases?: string[];
   hint?: string;
 }
 
-const { collection, challenge, passwordFormat, answerHashes, hint } = Astro.props;
+const { collection, challenge, passwordFormat, answerHashes, acceptedAliases = [], hint } = Astro.props;
 const storageKey = `ctf:solved:${collection}:${challenge}`;
 ---
 
@@ -15,6 +16,7 @@ const storageKey = `ctf:solved:${collection}:${challenge}`;
   class="validator-card validator-card-compact"
   data-ctf-validator
   data-answer-hashes={JSON.stringify(answerHashes)}
+  data-accepted-aliases={JSON.stringify(acceptedAliases)}
   data-storage-key={storageKey}
 >
   <div class="validator-head">
@@ -44,7 +46,7 @@ const storageKey = `ctf:solved:${collection}:${challenge}`;
 </section>
 
 <script>
-  import { normalizeAndHashAnswer } from "../utils/ctfAnswer";
+  import { normalizeAnswer, normalizeAndHashAnswer, hashAnswerHex } from "../utils/ctfAnswer";
   import { readSolveRecord, writeSolveRecord } from "../utils/solveTracker";
 
   document.querySelectorAll("[data-ctf-validator]").forEach((card) => {
@@ -53,7 +55,8 @@ const storageKey = `ctf:solved:${collection}:${challenge}`;
     const input = form?.querySelector("input");
     const state = root.querySelector("[data-validator-state]");
     const button = root.querySelector("[data-validator-button]");
-    const hashes = JSON.parse(root.getAttribute("data-answer-hashes") ?? "[]");
+    const hashes: string[] = JSON.parse(root.getAttribute("data-answer-hashes") ?? "[]");
+    const aliases: string[] = JSON.parse(root.getAttribute("data-accepted-aliases") ?? "[]");
     const storageKey = root.getAttribute("data-storage-key");
 
     if (
@@ -119,9 +122,39 @@ const storageKey = `ctf:solved:${collection}:${challenge}`;
         const timestamp = new Date().toISOString();
         const currentRecord = storageKey ? readSolveRecord(storageKey, localStorage) : null;
         const attempts = (currentRecord?.attempts ?? 0) + 1;
-        const digest = await normalizeAndHashAnswer(raw);
 
-        if (hashes.includes(digest)) {
+        const normalizedInput = normalizeAnswer(raw);
+        const digest = await normalizeAndHashAnswer(raw);
+        const rawDigest = await hashAnswerHex(raw.trim());
+
+        let isMatch = hashes.includes(digest) || hashes.includes(rawDigest);
+
+        if (!isMatch) {
+          const allCandidates = [...hashes, ...aliases];
+          for (const cand of allCandidates) {
+            if (!cand) continue;
+            const normCand = normalizeAnswer(cand);
+            if (normCand === normalizedInput || cand.trim().toLowerCase() === raw.trim().toLowerCase()) {
+              isMatch = true;
+              break;
+            }
+            if (cand.length !== 64) {
+              const candDigest = await normalizeAndHashAnswer(cand);
+              const candRawDigest = await hashAnswerHex(cand.trim());
+              if (
+                candDigest === digest ||
+                candDigest === rawDigest ||
+                candRawDigest === digest ||
+                candRawDigest === rawDigest
+              ) {
+                isMatch = true;
+                break;
+              }
+            }
+          }
+        }
+
+        if (isMatch) {
           if (storageKey) {
             writeSolveRecord(
               storageKey,
