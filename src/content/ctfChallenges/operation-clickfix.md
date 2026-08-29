@@ -3,15 +3,11 @@ collection: "discord-challenges"
 title: "Operation: ClickFix"
 difficulty: "medium"
 prompt: "ClickFix is a social engineering technique where a malicious webpage tricks users into manually running a command on their own machine. Typically by:
-
-Displaying a fake error or verification prompt
-Silently copying a malicious command to the clipboard (document.execCommand(\"copy\"))
-Instructing the user to paste and run it (e.g., in Run dialog, PowerShell, or Terminal)
-
+Displaying a fake error or verification prompt Silently copying a malicious command to the clipboard (document.execCommand(\"copy\")) Instructing the user to paste and run it (e.g., in Run dialog, PowerShell, or Terminal)
 It's dangerous precisely because the user executes the payload themselves, bypassing many endpoint controls."
-passwordFormat: "shaileshvisionaryastrologer.com"
+passwordFormat: "***************************.***"
 hint: ""
-answerHashes: ["***************************.***"]
+answerHashes: ["shaileshvisionaryastrologer.com"]
 order: 1
 ---
 
