@@ -979,18 +979,16 @@ ${editor.value}`;
 
           const rawAnswers = ctfAnswersInput.value.split(",").map((s) => s.trim()).filter(Boolean);
           const answerHashes = [];
-          const acceptedAliases = [];
           for (const ans of rawAnswers) {
             if (/^[a-f0-9]{64}$/i.test(ans)) {
               answerHashes.push(ans.toLowerCase());
             } else {
-              // It's plaintext, hash with normalized form and keep as alias
+              // It's plaintext, hash with normalized form
               const normalized = ans.normalize("NFKD").replace(/[\u0300-\u036f]/g, "").toLowerCase().trim().replace(/[`'"’"]/g, "").replace(/[_\s]+/g, " ").replace(/\s+/g, " ");
               const bytes = new TextEncoder().encode(normalized);
               const digestBuf = await crypto.subtle.digest("SHA-256", bytes);
               const digestHex = [...new Uint8Array(digestBuf)].map((b) => b.toString(16).padStart(2, "0")).join("");
               answerHashes.push(digestHex);
-              acceptedAliases.push(ans);
             }
           }
 
@@ -1002,7 +1000,6 @@ prompt: ${JSON.stringify(ctfPromptInput.value)}
 passwordFormat: ${JSON.stringify(ctfFormatInput.value.trim())}
 hint: ${JSON.stringify(ctfHintInput.value.trim())}
 answerHashes: ${JSON.stringify(answerHashes)}
-acceptedAliases: ${JSON.stringify(acceptedAliases)}
 order: ${parseInt(ctfOrderInput.value, 10) || 1}
 ---
 

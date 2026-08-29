@@ -1,4 +1,6 @@
 ---
+import { normalizeAndHashAnswer, hashAnswerHex } from "../utils/ctfAnswer";
+
 interface Props {
   collection: string;
   challenge: string;
@@ -8,15 +10,31 @@ interface Props {
   hint?: string;
 }
 
-const { collection, challenge, passwordFormat, answerHashes, acceptedAliases = [], hint } = Astro.props;
+const { collection, challenge, passwordFormat, answerHashes = [], acceptedAliases = [], hint } = Astro.props;
 const storageKey = `ctf:solved:${collection}:${challenge}`;
+
+// Build secure hash list on server: ensure ONLY 64-char SHA-256 hashes are rendered in the HTML
+const secureHashSet = new Set<string>();
+for (const item of [...answerHashes, ...acceptedAliases]) {
+  if (!item) continue;
+  const trimmed = item.trim();
+  if (/^[a-f0-9]{64}$/i.test(trimmed)) {
+    secureHashSet.add(trimmed.toLowerCase());
+  } else {
+    // If a plaintext answer was stored in markdown, hash it so plaintext is NEVER sent to the client HTML
+    const normHash = await normalizeAndHashAnswer(trimmed);
+    const rawHash = await hashAnswerHex(trimmed);
+    secureHashSet.add(normHash);
+    secureHashSet.add(rawHash);
+  }
+}
+const finalHashes = Array.from(secureHashSet);
 ---
 
 <section
   class="validator-card validator-card-compact"
   data-ctf-validator
-  data-answer-hashes={JSON.stringify(answerHashes)}
-  data-accepted-aliases={JSON.stringify(acceptedAliases)}
+  data-answer-hashes={JSON.stringify(finalHashes)}
   data-storage-key={storageKey}
 >
   <div class="validator-head">
@@ -46,7 +64,7 @@ const storageKey = `ctf:solved:${collection}:${challenge}`;
 </section>
 
 <script>
-  import { normalizeAnswer, normalizeAndHashAnswer, hashAnswerHex } from "../utils/ctfAnswer";
+  import { normalizeAndHashAnswer, hashAnswerHex } from "../utils/ctfAnswer";
   import { readSolveRecord, writeSolveRecord } from "../utils/solveTracker";
 
   document.querySelectorAll("[data-ctf-validator]").forEach((card) => {
@@ -56,7 +74,6 @@ const storageKey = `ctf:solved:${collection}:${challenge}`;
     const state = root.querySelector("[data-validator-state]");
     const button = root.querySelector("[data-validator-button]");
     const hashes: string[] = JSON.parse(root.getAttribute("data-answer-hashes") ?? "[]");
-    const aliases: string[] = JSON.parse(root.getAttribute("data-accepted-aliases") ?? "[]");
     const storageKey = root.getAttribute("data-storage-key");
 
     if (
@@ -123,36 +140,10 @@ const storageKey = `ctf:solved:${collection}:${challenge}`;
         const currentRecord = storageKey ? readSolveRecord(storageKey, localStorage) : null;
         const attempts = (currentRecord?.attempts ?? 0) + 1;
 
-        const normalizedInput = normalizeAnswer(raw);
         const digest = await normalizeAndHashAnswer(raw);
         const rawDigest = await hashAnswerHex(raw.trim());
 
-        let isMatch = hashes.includes(digest) || hashes.includes(rawDigest);
-
-        if (!isMatch) {
-          const allCandidates = [...hashes, ...aliases];
-          for (const cand of allCandidates) {
-            if (!cand) continue;
-            const normCand = normalizeAnswer(cand);
-            if (normCand === normalizedInput || cand.trim().toLowerCase() === raw.trim().toLowerCase()) {
-              isMatch = true;
-              break;
-            }
-            if (cand.length !== 64) {
-              const candDigest = await normalizeAndHashAnswer(cand);
-              const candRawDigest = await hashAnswerHex(cand.trim());
-              if (
-                candDigest === digest ||
-                candDigest === rawDigest ||
-                candRawDigest === digest ||
-                candRawDigest === rawDigest
-              ) {
-                isMatch = true;
-                break;
-              }
-            }
-          }
-        }
+        const isMatch = hashes.includes(digest) || hashes.includes(rawDigest);
 
         if (isMatch) {
           if (storageKey) {

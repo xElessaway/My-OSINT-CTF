@@ -9,8 +9,6 @@ passwordFormat: "***************************.***"
 hint: ""
 answerHashes:
   - "052d626dbd9f08a52360f90656698fd63ba955f2866231a8989ca99b1f657d76"
-acceptedAliases:
-  - "shaileshvisionaryastrologer.com"
 order: 1
 ---
 
