@@ -1,5 +1,6 @@
 ---
-import { getCollection } from "astro:content";
+import { getCollection, render } from "astro:content";
+import { marked } from "marked";
 import CTFAnswerValidator from "../../../components/CTFAnswerValidator.astro";
 import BaseLayout from "../../../layouts/BaseLayout.astro";
 import Icon from "../../../components/Icon.astro";
@@ -17,12 +18,15 @@ export async function getStaticPaths() {
 }
 
 const { entry } = Astro.props;
+const { Content } = await render(entry);
 const collections = await getCollection("ctfCollections");
 const collection = collections.find((item) => item.slug === entry.data.collection);
 const challengeImage = entry.data.image ?? entry.data.assets.find((asset) => asset.kind === "image")?.url;
 const flagArchive = entry.data.assets.find(
   (asset) => asset.kind === "archive" || asset.label.toLowerCase().includes("flag archive")
 );
+const hasBody = Boolean(entry.body && entry.body.trim().length > 0 && entry.body.trim() !== "Add challenge notes here.");
+const promptHtml = await marked.parse(entry.data.prompt || "");
 ---
 
 <BaseLayout
@@ -48,7 +52,7 @@ const flagArchive = entry.data.assets.find(
       </div>
 
       <h1 class="article-title">{entry.data.title}</h1>
-      <p class="article-lede">{entry.data.prompt}</p>
+      <div class="article-lede challenge-prompt-prose" set:html={promptHtml} />
 
       {
         challengeImage && (
@@ -60,16 +64,23 @@ const flagArchive = entry.data.assets.find(
       }
     </header>
 
+    <!-- Main Challenge Manuscript / Body (if present) -->
+    {
+      hasBody && (
+        <main class="article-manuscript-panel challenge-manuscript-panel">
+          <div class="article-prose prose">
+            <Content />
+          </div>
+        </main>
+      )
+    }
+
     <!-- Mission Operational Strip & Validator -->
-    <main class="challenge-mission-panel">
+    <section class="challenge-mission-panel">
       <div class="challenge-metadata-grid">
         <div class="challenge-meta-card">
           <span class="meta-card-label">PRACTICE SET</span>
           <strong class="meta-card-value">{collection?.data.title ?? entry.data.collection}</strong>
-        </div>
-        <div class="challenge-meta-card">
-          <span class="meta-card-label">EXPECTED FORMAT</span>
-          <code class="meta-card-code">{entry.data.passwordFormat}</code>
         </div>
         <div class="challenge-meta-card">
           <span class="meta-card-label">EVIDENCE ASSET</span>
@@ -95,6 +106,6 @@ const flagArchive = entry.data.assets.find(
           hint={entry.data.hint}
         />
       </div>
-    </main>
+    </section>
   </div>
 </BaseLayout>

@@ -1709,6 +1709,49 @@ p {
   margin-bottom: 1.5rem;
 }
 
+.challenge-prompt-prose {
+  display: block;
+}
+
+.challenge-prompt-prose p {
+  margin-bottom: 0.85rem;
+}
+
+.challenge-prompt-prose p:last-child {
+  margin-bottom: 0;
+}
+
+.challenge-prompt-prose ul,
+.challenge-prompt-prose ol {
+  margin: 0.6rem 0 0.85rem 1.4rem;
+  padding: 0;
+}
+
+.challenge-prompt-prose li {
+  margin-bottom: 0.35rem;
+}
+
+.challenge-prompt-prose code {
+  padding: 0.15rem 0.4rem;
+  border: 1px solid var(--primary);
+  border-radius: 4px;
+  background: var(--surface-panel);
+  color: var(--secondary);
+  font-family: "JetBrains Mono", monospace;
+  font-size: 0.88em;
+  font-weight: 600;
+}
+
+[data-theme="dark"] .challenge-prompt-prose code {
+  background: #132238;
+  color: #ff8aa8;
+  border-color: #2a3e5c;
+}
+
+.challenge-manuscript-panel {
+  margin-bottom: 2rem;
+}
+
 .article-info-strip {
   display: flex;
   flex-wrap: wrap;

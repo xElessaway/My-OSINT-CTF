@@ -1,55 +1,93 @@
 ---
 import { getCollection } from "astro:content";
+import fs from "node:fs";
+import path from "node:path";
 import BaseLayout from "../layouts/BaseLayout.astro";
 import Icon from "../components/Icon.astro";
 
-const blogPosts = (await getCollection("blog")).map((p) => ({
-  slug: p.slug,
-  title: p.data.title,
-  description: p.data.description,
-  publishedAt: p.data.publishedAt.toISOString().split("T")[0],
-  archiveSection: p.data.archiveSection,
-  tags: p.data.tags,
-  cover: p.data.cover || "",
-  featured: p.data.featured,
-  draft: p.data.draft,
-  sourceLabel: p.data.sourceLabel || "",
-  sourceUrl: p.data.sourceUrl || "",
-  body: p.body
-})).sort((a, b) => new Date(b.publishedAt).valueOf() - new Date(a.publishedAt).valueOf());
+function getFileTimestamp(relPath: string): number {
+  try {
+    const fullPath = path.join(process.cwd(), relPath);
+    if (fs.existsSync(fullPath)) {
+      return fs.statSync(fullPath).mtimeMs;
+    }
+  } catch (e) {}
+  return 0;
+}
 
-const actorList = (await getCollection("actors")).map((a) => ({
-  slug: a.slug,
-  name: a.data.name,
-  aliases: a.data.aliases || [],
-  status: a.data.status,
-  origin: a.data.origin,
-  motivation: a.data.motivation,
-  targets: a.data.targets || [],
-  firstSeen: a.data.firstSeen,
-  lastSeen: a.data.lastSeen,
-  tools: a.data.tools || [],
-  ttps: a.data.ttps || [],
-  tags: a.data.tags || [],
-  timeline: a.data.timeline || [],
-  references: a.data.references || [],
-  relatedPosts: a.data.relatedPosts || [],
-  featured: a.data.featured || false,
-  body: a.body
-}));
+function formatDate(timestampOrStr: number | string): string {
+  if (!timestampOrStr) return "";
+  const d = new Date(timestampOrStr);
+  if (isNaN(d.getTime())) return String(timestampOrStr);
+  return d.toISOString().split("T")[0];
+}
 
-const ctfChallenges = (await getCollection("ctfChallenges")).map((c) => ({
-  slug: c.slug,
-  collection: c.data.collection,
-  title: c.data.title,
-  difficulty: c.data.difficulty,
-  prompt: c.data.prompt,
-  passwordFormat: c.data.passwordFormat,
-  hint: c.data.hint || "",
-  order: c.data.order,
-  answerHashes: c.data.answerHashes,
-  body: c.body
-}));
+const blogPosts = (await getCollection("blog")).map((p) => {
+  const fileTime = getFileTimestamp(`src/content/blog/${p.slug}.md`);
+  const pubTime = p.data.publishedAt ? new Date(p.data.publishedAt).getTime() : 0;
+  const ts = Math.max(pubTime, fileTime) || Date.now();
+  return {
+    slug: p.slug,
+    title: p.data.title,
+    description: p.data.description,
+    publishedAt: p.data.publishedAt ? p.data.publishedAt.toISOString().split("T")[0] : formatDate(ts),
+    archiveSection: p.data.archiveSection,
+    tags: p.data.tags,
+    cover: p.data.cover || "",
+    featured: p.data.featured,
+    draft: p.data.draft,
+    sourceLabel: p.data.sourceLabel || "",
+    sourceUrl: p.data.sourceUrl || "",
+    body: p.body,
+    _timestamp: ts,
+    _dateStr: p.data.publishedAt ? p.data.publishedAt.toISOString().split("T")[0] : formatDate(ts)
+  };
+}).sort((a, b) => b._timestamp - a._timestamp);
+
+const actorList = (await getCollection("actors")).map((a) => {
+  const fileTime = getFileTimestamp(`src/content/actors/${a.slug}.md`);
+  const ts = fileTime || Date.now();
+  return {
+    slug: a.slug,
+    name: a.data.name,
+    aliases: a.data.aliases || [],
+    status: a.data.status,
+    origin: a.data.origin,
+    motivation: a.data.motivation,
+    targets: a.data.targets || [],
+    firstSeen: a.data.firstSeen,
+    lastSeen: a.data.lastSeen,
+    tools: a.data.tools || [],
+    ttps: a.data.ttps || [],
+    tags: a.data.tags || [],
+    timeline: a.data.timeline || [],
+    references: a.data.references || [],
+    relatedPosts: a.data.relatedPosts || [],
+    featured: a.data.featured || false,
+    body: a.body,
+    _timestamp: ts,
+    _dateStr: a.data.lastSeen ? `Seen: ${a.data.lastSeen}` : formatDate(ts)
+  };
+}).sort((a, b) => b._timestamp - a._timestamp);
+
+const ctfChallenges = (await getCollection("ctfChallenges")).map((c) => {
+  const fileTime = getFileTimestamp(`src/content/ctfChallenges/${c.slug}.md`);
+  const ts = fileTime || Date.now();
+  return {
+    slug: c.slug,
+    collection: c.data.collection,
+    title: c.data.title,
+    difficulty: c.data.difficulty,
+    prompt: c.data.prompt,
+    passwordFormat: c.data.passwordFormat,
+    hint: c.data.hint || "",
+    order: c.data.order,
+    answerHashes: c.data.answerHashes,
+    body: c.body,
+    _timestamp: ts,
+    _dateStr: formatDate(ts)
+  };
+}).sort((a, b) => b._timestamp - a._timestamp);
 
 const existingPostsJson = JSON.stringify(blogPosts).replace(/</g, "\\u003c");
 const existingActorsJson = JSON.stringify(actorList).replace(/</g, "\\u003c");
@@ -716,7 +754,14 @@ const existingCtfJson = JSON.stringify(ctfChallenges).replace(/</g, "\\u003c");
         if (previewDesc) previewDesc.textContent = actorMotivationInput.value.trim() || "Motivation summary...";
       } else if (currentStudioMode === "ctf") {
         if (previewTitle) previewTitle.textContent = ctfTitleInput.value.trim() || "CTF Challenge";
-        if (previewDesc) previewDesc.textContent = ctfPromptInput.value.trim() || "Mission prompt...";
+        if (previewDesc) {
+          const rawPrompt = ctfPromptInput.value.trim() || "Mission prompt...";
+          if (typeof marked !== "undefined") {
+            previewDesc.innerHTML = marked.parse(rawPrompt);
+          } else {
+            previewDesc.textContent = rawPrompt;
+          }
+        }
       } else {
         if (previewTitle) previewTitle.textContent = titleInput.value.trim() || "Untitled Article";
         if (previewDesc) previewDesc.textContent = descInput.value.trim() || "Description summary...";
@@ -832,6 +877,9 @@ const existingCtfJson = JSON.stringify(ctfChallenges).replace(/</g, "\\u003c");
         ...libraryCtf.map((c) => ({ ...c, __type: "ctf" }))
       ];
 
+      // Sort by timestamp descending (newest on top)
+      combined.sort((a, b) => (b._timestamp || 0) - (a._timestamp || 0));
+
       if (currentFilterType !== "all") {
         combined = combined.filter((i) => i.__type === currentFilterType);
       }
@@ -853,12 +901,14 @@ const existingCtfJson = JSON.stringify(ctfChallenges).replace(/</g, "\\u003c");
       libraryList.innerHTML = filtered.map((item) => {
         const typeLabels = { blog: "ARTICLE", actors: "DOSSIER", ctf: "CTF" };
         const label = typeLabels[item.__type] || item.__type.toUpperCase();
+        const dateDisplay = item._dateStr ? `<span class="library-item-date">${item._dateStr}</span>` : "";
         return `
           <div class="library-item-card">
             <div class="library-item-info">
               <div class="library-item-meta">
                 <span class="dossier-type-tag ${item.__type}">${label}</span>
                 <strong class="library-item-name">${item.title || item.name}</strong>
+                ${dateDisplay}
               </div>
               <span class="library-item-slug">src/content/${item.__type === "ctf" ? "ctfChallenges" : item.__type}/${item.slug}.md</span>
             </div>
@@ -1413,12 +1463,12 @@ ${editor.value}`;
           const answerHashes = rawAnswers;
 
           markdownContent = `---
-collection: "${ctfCollectionInput.value}"
-title: "${itemTitle.replace(/"/g, '\\"')}"
-difficulty: "${ctfDifficultyInput.value}"
-prompt: "${ctfPromptInput.value.replace(/"/g, '\\"')}"
-passwordFormat: "${ctfFormatInput.value.trim()}"
-hint: "${ctfHintInput.value.trim()}"
+collection: ${JSON.stringify(ctfCollectionInput.value || "discord-challenges")}
+title: ${JSON.stringify(itemTitle)}
+difficulty: ${JSON.stringify(ctfDifficultyInput.value || "medium")}
+prompt: ${JSON.stringify(ctfPromptInput.value)}
+passwordFormat: ${JSON.stringify(ctfFormatInput.value.trim())}
+hint: ${JSON.stringify(ctfHintInput.value.trim())}
 answerHashes: ${JSON.stringify(answerHashes)}
 order: ${parseInt(ctfOrderInput.value, 10) || 1}
 ---
@@ -1487,6 +1537,75 @@ ${editor.value}`;
           showAlert(`🎉 Published to GitHub! (${targetPath})`, "info");
           currentOriginalSlug = itemSlug;
           if (editingIndicator) editingIndicator.textContent = `Live: ${targetPath}`;
+
+          const now = Date.now();
+          const nowStr = new Date().toISOString().split("T")[0];
+
+          if (currentStudioMode === "actors") {
+            const existingIdx = libraryActors.findIndex((a) => a.slug === itemSlug);
+            const updatedItem = {
+              slug: itemSlug,
+              name: itemTitle,
+              aliases: actorAliasesInput.value.split(",").map((s) => s.trim()).filter(Boolean),
+              status: actorStatusInput.value,
+              origin: actorOriginInput.value,
+              motivation: actorMotivationInput.value,
+              targets: actorTargetsInput.value.split(",").map((s) => s.trim()).filter(Boolean),
+              firstSeen: actorFirstSeenInput.value,
+              lastSeen: actorLastSeenInput.value,
+              tools: actorToolsInput.value.split(",").map((s) => s.trim()).filter(Boolean),
+              ttps: actorTtpsInput.value.split(",").map((s) => s.trim()).filter(Boolean),
+              tags: actorTagsInput.value.split(",").map((s) => s.trim()).filter(Boolean),
+              relatedPosts: actorRelatedPostsInput.value.split(",").map((s) => s.trim()).filter(Boolean),
+              featured: actorFeaturedCheck.checked,
+              body: editor.value,
+              _timestamp: now,
+              _dateStr: actorLastSeenInput.value ? `Seen: ${actorLastSeenInput.value}` : nowStr
+            };
+            if (existingIdx >= 0) libraryActors.splice(existingIdx, 1);
+            libraryActors.unshift(updatedItem);
+          } else if (currentStudioMode === "ctf") {
+            const rawAnswers = ctfAnswersInput.value.split(",").map((s) => s.trim()).filter(Boolean);
+            const existingIdx = libraryCtf.findIndex((c) => c.slug === itemSlug);
+            const updatedItem = {
+              slug: itemSlug,
+              collection: ctfCollectionInput.value,
+              title: itemTitle,
+              difficulty: ctfDifficultyInput.value,
+              prompt: ctfPromptInput.value,
+              passwordFormat: ctfFormatInput.value.trim(),
+              hint: ctfHintInput.value.trim(),
+              order: parseInt(ctfOrderInput.value, 10) || 1,
+              answerHashes: rawAnswers,
+              body: editor.value,
+              _timestamp: now,
+              _dateStr: nowStr
+            };
+            if (existingIdx >= 0) libraryCtf.splice(existingIdx, 1);
+            libraryCtf.unshift(updatedItem);
+          } else {
+            const existingIdx = libraryPosts.findIndex((p) => p.slug === itemSlug);
+            const updatedItem = {
+              slug: itemSlug,
+              title: itemTitle,
+              description: descInput.value,
+              publishedAt: dateInput.value || nowStr,
+              archiveSection: sectionInput.value || "reports",
+              tags: tagsInput.value.split(",").map((s) => s.trim()).filter(Boolean),
+              cover: coverInput.value.trim(),
+              featured: featuredCheck.checked,
+              draft: isDraft,
+              sourceUrl: sourceUrlInput.value.trim(),
+              body: editor.value,
+              _timestamp: now,
+              _dateStr: dateInput.value || nowStr
+            };
+            if (existingIdx >= 0) libraryPosts.splice(existingIdx, 1);
+            libraryPosts.unshift(updatedItem);
+          }
+
+          const libraryCountEl = document.getElementById("library-count");
+          if (libraryCountEl) libraryCountEl.textContent = libraryPosts.length + libraryActors.length + libraryCtf.length;
         } else {
           const err = await putRes.json().catch(() => ({}));
           if (putRes.status === 404) {
@@ -2080,6 +2199,15 @@ ${editor.value}`;
       font-size: 0.78rem;
       font-family: var(--font-mono);
       color: var(--text-muted);
+    }
+
+    .library-item-date {
+      font-size: 0.72rem;
+      font-family: var(--font-mono);
+      color: var(--text-soft);
+      margin-left: auto;
+      padding-right: 0.5rem;
+      flex-shrink: 0;
     }
 
     .dossier-type-tag {
