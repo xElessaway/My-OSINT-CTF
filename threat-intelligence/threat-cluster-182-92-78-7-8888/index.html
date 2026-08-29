@@ -1,0 +1,879 @@
+<!DOCTYPE html><html lang="en"> <head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="description" content="Webshell-enabled command execution, internal-network discovery through a local SOCKS proxy, database and host reconnaissance, screen and environment collection, dynamic Java payload loading, and tunneling or payload staging."><meta name="generator" content="Astro v5.18.1"><link rel="canonical" href="https://xelessaway.me/threat-intelligence/threat-cluster-182-92-78-7-8888/"><!-- Open Graph / WhatsApp / Telegram / Discord / LinkedIn --><meta property="og:site_name" content="Ahmed Elessaway (xElessaway)"><meta property="og:title" content="Threat Cluster 182[.]92[.]78[.]7:8888 | Threat Intelligence Dossier"><meta property="og:description" content="Webshell-enabled command execution, internal-network discovery through a local SOCKS proxy, database and host reconnaissance, screen and environment collection, dynamic Java payload loading, and tunneling or payload staging."><meta property="og:type" content="article"><meta property="og:url" content="https://xelessaway.me/threat-intelligence/threat-cluster-182-92-78-7-8888/"><meta property="og:image" content="https://xelessaway.me/logo-me.png"><meta property="og:image:secure_url" content="https://xelessaway.me/logo-me.png"><meta property="og:image:alt" content="Threat Cluster 182[.]92[.]78[.]7:8888 | Threat Intelligence Dossier"><meta property="article:section" content="Threat Intelligence"><meta property="article:tag" content="threat-intelligence"><meta property="article:tag" content="dfir"><meta property="article:tag" content="malware-analysis"><meta property="article:tag" content="linux"><meta property="article:tag" content="java"><meta property="article:tag" content="webshell"><meta property="article:tag" content="pivoting"><meta property="article:tag" content="geoserver"><meta property="article:tag" content="exposed-infrastructure"><!-- Twitter / X Card --><meta name="twitter:card" content="summary_large_image"><meta name="twitter:site" content="@ahmed_elessaway"><meta name="twitter:creator" content="@ahmed_elessaway"><meta name="twitter:title" content="Threat Cluster 182[.]92[.]78[.]7:8888 | Threat Intelligence Dossier"><meta name="twitter:description" content="Webshell-enabled command execution, internal-network discovery through a local SOCKS proxy, database and host reconnaissance, screen and environment collection, dynamic Java payload loading, and tunneling or payload staging."><meta name="twitter:image" content="https://xelessaway.me/logo-me.png"><meta name="twitter:image:alt" content="Threat Cluster 182[.]92[.]78[.]7:8888 | Threat Intelligence Dossier"><link rel="icon" type="image/png" href="/logo-me.png"><link rel="apple-touch-icon" href="/logo-me.png"><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400..800&family=Hanken+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet"><link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&display=block" rel="stylesheet"><script data-goatcounter="https://xelessaway.goatcounter.com/count" async src="https://gc.zgo.at/count.js"></script><script>
+      (() => {
+        const savedTheme = localStorage.getItem("theme");
+        const theme = savedTheme === "dark" ? "dark" : "light";
+        document.documentElement.setAttribute("data-theme", theme);
+      })();
+    </script><title>Threat Cluster 182[.]92[.]78[.]7:8888 | Threat Intelligence Dossier</title><style>.dossier-wide-container[data-astro-cid-necseomn]{max-width:1140px;width:100%;margin-inline:auto}.article-prose[data-astro-cid-necseomn]>h1:first-child{display:none}.article-status-pill[data-astro-cid-necseomn].tracking{background:#f59e0b1a;border-color:#f59e0b;color:#f59e0b}.article-status-pill[data-astro-cid-necseomn].tracking .pulse-dot[data-astro-cid-necseomn]{background:#f59e0b}[data-astro-cid-necseomn][data-theme=dark] .article-status-pill[data-astro-cid-necseomn].tracking{background:#f59e0b22;border-color:#fbbf24;color:#fbbf24}[data-astro-cid-necseomn][data-theme=dark] .article-status-pill[data-astro-cid-necseomn].tracking .pulse-dot[data-astro-cid-necseomn]{background:#fbbf24}.article-status-pill[data-astro-cid-necseomn].active{background:var(--secondary-soft);border-color:var(--secondary);color:var(--secondary)}.article-status-pill[data-astro-cid-necseomn].disrupted,.article-status-pill[data-astro-cid-necseomn].historic{background:var(--surface-panel);border-color:var(--line-soft);color:var(--text-soft)}.article-status-pill[data-astro-cid-necseomn].disrupted .pulse-dot[data-astro-cid-necseomn],.article-status-pill[data-astro-cid-necseomn].historic .pulse-dot[data-astro-cid-necseomn]{background:var(--text-soft)}
+</style>
+<link rel="stylesheet" href="/_astro/about.CVC_7FNF.css"></head> <body class="ops-root"> <a class="skip-link" href="#main-content">Skip to content</a> <header class="site-header"> <div class="shell-bar"> <div class="shell-left"> <button class="menu-toggle" type="button" aria-expanded="false" aria-controls="site-nav"> <span class="sr-only">Toggle navigation</span> <span></span> </button> <a class="brand-mark" href="/" aria-label="Ahmed Elessaway home"> <img src="/logo-me.png" alt="Ahmed Elessaway" class="brand-avatar"> <span class="brand-copy"> <strong>xElessaway</strong> <small>research portfolio</small> </span> </a> </div> <nav id="site-nav" class="site-nav" aria-label="Primary navigation"> <a class="nav-link" href="/"> Home </a><a class="nav-link" href="/blog/"> Research </a><a class="nav-link is-active" href="/threat-intelligence/"> Threat Intel </a><a class="nav-link" href="/ctf/"> Practice </a><a class="nav-link" href="/about/"> Profile </a> </nav> <div class="shell-right-actions"> <button class="theme-toggle-btn" type="button" id="theme-toggle" aria-label="Toggle light and dark theme" title="Toggle Theme"> <!-- Moon Icon for Dark Mode --> <svg class="theme-svg theme-icon-moon" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"> <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path> </svg> <!-- Sun Icon for Light Mode --> <svg class="theme-svg theme-icon-sun" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"> <circle cx="12" cy="12" r="5"></circle> <line x1="12" y1="1" x2="12" y2="3"></line> <line x1="12" y1="21" x2="12" y2="23"></line> <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line> <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line> <line x1="1" y1="12" x2="3" y2="12"></line> <line x1="21" y1="12" x2="23" y2="12"></line> <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line> <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line> </svg> </button> <a class="header-contact" href="/about/#contact">Connect</a> </div> </div> </header> <script type="module">const c=document.querySelector(".menu-toggle"),e=document.querySelector("#site-nav"),s=window.matchMedia("(min-width: 1100px)");if(c instanceof HTMLButtonElement&&e instanceof HTMLElement){const o=()=>{e.classList.remove("is-open"),c.setAttribute("aria-expanded","false")},t=()=>{s.matches&&o()};c.addEventListener("click",()=>{const n=e.classList.toggle("is-open");c.setAttribute("aria-expanded",String(n))}),e.querySelectorAll("a").forEach(n=>{n.addEventListener("click",()=>{o()})}),document.addEventListener("click",n=>{const a=n.target;!s.matches&&e.classList.contains("is-open")&&a instanceof Node&&!e.contains(a)&&!c.contains(a)&&o()}),"addEventListener"in s&&s.addEventListener("change",t),t()}const i=document.getElementById("theme-toggle");i?.addEventListener("click",()=>{const t=(document.documentElement.getAttribute("data-theme")||"light")==="dark"?"light":"dark";document.documentElement.setAttribute("data-theme",t),localStorage.setItem("theme",t)});</script> <main id="main-content" class="page-main">  <div class="article-dossier-container dossier-wide-container" data-astro-cid-necseomn> <!-- Top Back Navigation Bar --> <nav class="article-breadcrumb-bar" data-astro-cid-necseomn> <a href="/threat-intelligence/" class="article-back-link" data-astro-cid-necseomn> <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class aria-hidden="true"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg> <span data-astro-cid-necseomn>Back to Threat Intelligence Feed</span> </a> <span class="article-doc-id" data-astro-cid-necseomn>DOSSIER_ID: THREAT-CLUSTER-182-92-78-7-8888</span> </nav> <!-- Unified Dossier Header Card --> <header class="article-dossier-header" data-astro-cid-necseomn> <div class="article-tape-sticker" aria-hidden="true" data-astro-cid-necseomn></div> <div class="article-meta-ribbon" data-astro-cid-necseomn> <span class="article-type-pill" data-astro-cid-necseomn>THREAT DOSSIER</span> <span class="article-status-pill active" data-astro-cid-necseomn> <span class="pulse-dot" aria-hidden="true" data-astro-cid-necseomn></span> ACTIVE </span> </div> <h1 class="article-title" data-astro-cid-necseomn>Threat Cluster 182[.]92[.]78[.]7:8888</h1> <p class="article-lede" data-astro-cid-necseomn>Webshell-enabled command execution, internal-network discovery through a local SOCKS proxy, database and host reconnaissance, screen and environment collection, dynamic Java payload loading, and tunneling or payload staging.</p> <div class="article-info-strip" data-astro-cid-necseomn> <div class="article-info-item" data-astro-cid-necseomn> <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class aria-hidden="true"><circle cx="12" cy="12" r="10"></circle><line x1="2" y1="12" x2="22" y2="12"></line><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path></svg> <span data-astro-cid-necseomn>Unknown / exposed Linux staging and post-compromise infrastructure</span> </div> <div class="article-info-item" data-astro-cid-necseomn> <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class aria-hidden="true"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg> <span data-astro-cid-necseomn>Active: 2026-08-29 &rarr; 2026-08-29</span> </div> <div class="article-info-item" data-astro-cid-necseomn> <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class aria-hidden="true"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path><path d="M9 12l2 2 4-4"></path></svg> <span data-astro-cid-necseomn>Aliases: 18292-8888 Exposed Linux Pivot and Java Webshell Node, GeoServer-SOCKS-Chisel Staging Cluster</span> </div> </div> <div class="article-tags-wrap" data-astro-cid-necseomn> <span class="article-tag-chip" data-astro-cid-necseomn>#threat-intelligence</span><span class="article-tag-chip" data-astro-cid-necseomn>#dfir</span><span class="article-tag-chip" data-astro-cid-necseomn>#malware-analysis</span><span class="article-tag-chip" data-astro-cid-necseomn>#linux</span><span class="article-tag-chip" data-astro-cid-necseomn>#java</span><span class="article-tag-chip" data-astro-cid-necseomn>#webshell</span><span class="article-tag-chip" data-astro-cid-necseomn>#pivoting</span><span class="article-tag-chip" data-astro-cid-necseomn>#geoserver</span><span class="article-tag-chip" data-astro-cid-necseomn>#exposed-infrastructure</span> </div> </header> <!-- Main Dossier Manuscript --> <main class="article-manuscript-panel" data-astro-cid-necseomn> <div class="article-prose prose" data-astro-cid-necseomn> <h1 id="threat-cluster-182927878888">Threat Cluster 182[.]92[.]78[.]7:8888</h1>
+<blockquote>
+<p>This dossier was generated from passive HTTP observation and bounded static acquisition. The endpoint was not logged into, exploited, modified, or used to submit data. Exposed command handlers and payloads were not invoked. Acquired artifacts were preserved for analysis and were not executed.</p>
+</blockquote>
+<h3 id="evidence-coverage">Evidence Coverage</h3>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th>Metric</th><th>Value</th></tr></thead><tbody><tr><td>Root directory listing acquired</td><td>1</td></tr><tr><td>Visible root-level entries observed</td><td>29</td></tr><tr><td>Selected subdirectory indexes acquired</td><td>3</td></tr><tr><td>Text / source artifacts acquired</td><td>10</td></tr><tr><td>ELF binaries acquired</td><td>1</td></tr><tr><td>ZIP archives acquired</td><td>1</td></tr><tr><td>Empty or zero-length artefacts acquired</td><td>2</td></tr><tr><td>Artifact hashes computed</td><td>13</td></tr><tr><td>Dynamic execution performed</td><td>No</td></tr><tr><td>Login, exploitation, modification, or submission performed</td><td>No</td></tr><tr><td>Recursive acquisition completed</td><td>No — bounded collection only</td></tr></tbody></table>
+<h3 id="motivation--objectives">Motivation &#x26; Objectives</h3>
+<h3 id="strategic-motivation">Strategic Motivation</h3>
+<p>The host presents a publicly accessible Python <code>SimpleHTTP/0.6</code> directory listing containing Linux runtime paths, shell and Python tooling, JSP command handlers, a Chisel-labelled executable, a Java payload, a local SOCKS5 probing utility, GeoServer-related material, SSH temporary material, and a file explicitly named <code>webshell.jsp</code>.[1] Static review provides stronger evidence than filename semantics alone: both JSP handlers invoke <code>Runtime.getRuntime().exec()</code> on attacker-supplied request parameters, while the Java payload implements dynamic class loading, command execution, host and environment collection, screen capture, file access, and database operations.[2] [3] [4]</p>
+<p>These findings support assessment of the endpoint as <strong>high-confidence suspicious infrastructure with probable webshell and pivoting capability</strong>. They do not, by themselves, prove when the handlers were installed, whether an external operator currently controls the host, whether commands were successfully executed, or whether any listed data belonged to victims.</p>
+<h3 id="operational-objectives">Operational Objectives</h3>
+<ul>
+<li>
+<p><strong>Webshell-Based Command Execution:</strong> Exposing <code>cmd.jsp</code> and <code>webshell.jsp</code>, both of which accept a <code>cmd</code> parameter and execute it through the Java runtime.[2] [3]</p>
+</li>
+<li>
+<p><strong>In-Memory Java Payload Loading:</strong> Maintaining a decompiled <code>basic.payload</code> class loader that accepts bytecode, defines classes, stores modules in an HTTP-session map, and dispatches methods dynamically.[4]</p>
+</li>
+<li>
+<p><strong>Host and Environment Discovery:</strong> Collecting operating-system properties, local IP addresses, filesystem roots, current user, servlet paths, Java properties, and environment variables.[4]</p>
+</li>
+<li>
+<p><strong>Screen and Data Collection:</strong> Implementing full-screen capture and file-read functionality through Java AWT and filesystem APIs.[4]</p>
+</li>
+<li>
+<p><strong>Database Access:</strong> Supporting JDBC connections to MySQL, Oracle, SQL Server, and PostgreSQL and executing supplied SQL statements.[4]</p>
+</li>
+<li>
+<p><strong>Internal Pivoting and Service Discovery:</strong> Using a local SOCKS5 proxy at <code>127.0.0.1:1080</code> to probe internal addresses on SSH, MySQL, and Redis ports.[5]</p>
+</li>
+<li>
+<p><strong>Tunneling and Payload Staging:</strong> Exposing <code>chx</code> as a statically linked x86-64 Go executable and <code>chisel.gz</code> as an empty file named after the Chisel tunneling utility.[1] [6]</p>
+</li>
+<li>
+<p><strong>GeoServer Credential and Request Collection:</strong> Hosting a script containing the literal credential pair <code>admin:geoserver</code> and querying GeoServer monitor request IDs from an external domain.[7]</p>
+</li>
+</ul>
+<h3 id="inferred-target-profile">Inferred Target Profile</h3>
+<ul>
+<li>
+<p>Internet-facing Java application servers and servlet containers.</p>
+</li>
+<li>
+<p>GeoServer deployments and geospatial service backends.</p>
+</li>
+<li>
+<p>Linux VPS instances hosting Java, GeoServer, or proxy services.</p>
+</li>
+<li>
+<p>Internal SSH, MySQL, and Redis services reachable from a compromised application host.</p>
+</li>
+<li>
+<p>Applications and data stores whose credentials or environment variables are available to the Java process.</p>
+</li>
+</ul>
+<h3 id="key-operational-findings">Key Operational Findings</h3>
+<ul>
+<li>
+<p>Unauthenticated directory listing on <code>182[.]92[.]78[.]7:8888</code> with the title <code>Directory listing for /</code>.[1]</p>
+</li>
+<li>
+<p>The server identifies as <code>SimpleHTTP/0.6 Python/3.11.4</code> and exposes a root containing 29 visible entries.[1]</p>
+</li>
+<li>
+<p><code>cmd.jsp</code> and <code>webshell.jsp</code> are direct command-execution handlers accepting request parameters.[2] [3]</p>
+</li>
+<li>
+<p><code>payload.java</code> is decompiled Java source for a servlet-context-aware, session-persistent dynamic payload loader.[4]</p>
+</li>
+<li>
+<p>The payload contains methods for command execution, environment/system discovery, screen capture, file access, class inclusion, and SQL execution.[4]</p>
+</li>
+<li>
+<p><code>sp.py</code> performs SOCKS5 negotiation against a local proxy and attempts connections to <code>192[.]18[.]1[.]1:22</code>, <code>192[.]18[.]1[.]2:3306</code>, and <code>192[.]18[.]1[.]4:6379</code>.[5]</p>
+</li>
+<li>
+<p><code>chx</code> is an 8,654,848-byte, statically linked x86-64 Go ELF executable; its filename and context suggest tunneling or auxiliary staging, but its runtime behavior was not tested.[6]</p>
+</li>
+<li>
+<p><code>1.sh</code> contains hardcoded HTTP Basic credentials <code>admin:geoserver</code> and retrieves GeoServer monitor request records from <code>www.hlxdtdl.com</code>.[7]</p>
+</li>
+<li>
+<p>The host exposes Unix/X11 sockets, systemd-private paths, SSH temporary material, GeoServer-labelled content, and Java installation/update logs, suggesting that the directory may map to an active or recently used Linux workspace.[1]</p>
+</li>
+</ul>
+<h3 id="credentials-keys--tokens-redacted">Credentials, Keys &#x26; Tokens (Redacted)</h3>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th>Risk</th><th>Type</th><th>Redacted Value</th><th>Source / Layer</th></tr></thead><tbody><tr><td><strong>High / Exposed in Source</strong></td><td>GeoServer HTTP Basic credential</td><td><code>admin:[REDACTED]</code></td><td><code>1.sh</code> / L0 acquired source</td></tr><tr><td><strong>High / Capability-Based</strong></td><td>Arbitrary OS command execution</td><td><code>[REQUEST PARAMETER: cmd OR cmdLine]</code></td><td><code>cmd.jsp</code>, <code>webshell.jsp</code>, <code>payload.java</code> / L0 acquired source</td></tr><tr><td><strong>High / Capability-Based</strong></td><td>Database credentials accepted by payload</td><td><code>[dbUsername / dbPassword PARAMETERS]</code></td><td><code>payload.java</code> / L0 acquired source</td></tr><tr><td><strong>High / Capability-Based</strong></td><td>Environment variables and Java system properties</td><td><code>[COLLECTED AT RUNTIME — NOT ACQUIRED]</code></td><td><code>payload.java</code> / L0 acquired source</td></tr><tr><td><strong>Medium / Potentially Sensitive</strong></td><td>GeoServer request history and request bodies</td><td><code>[REMOTE REQUEST IDS 632815–632914]</code></td><td><code>1.sh</code> / L0 acquired source</td></tr><tr><td><strong>Medium / Potentially Sensitive</strong></td><td>SSH temporary material</td><td><code>[DIRECTORY OBSERVED; CONTENT NOT ACQUIRED]</code></td><td><code>ssh-b0Lv1r4VfNpp/</code> / L0 listing</td></tr></tbody></table>
+<p>No private key, password database, session token, or victim data was acquired from the endpoint during this bounded pass. The presence of the named locations and code paths warrants treating any credentials available to the exposed service as potentially compromised until ownership and host integrity are established.</p>
+<h3 id="verified-indicators">Verified Indicators</h3>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th>Type</th><th>Defanged Value / Hash</th><th>Context</th><th>Confidence</th></tr></thead><tbody><tr><td><strong>Investigated Host</strong></td><td><code>182[.]92[.]78[.]7</code></td><td>User-supplied investigated host</td><td>High (observed)</td></tr><tr><td><strong>Service Endpoint</strong></td><td><code>hxxp://182[.]92[.]78[.]7:8888/</code></td><td>Unauthenticated directory listing</td><td>High (observed)</td></tr><tr><td><strong>HTTP Server</strong></td><td><code>SimpleHTTP/0.6 Python/3.11.4</code></td><td>Server response header</td><td>High (observed)</td></tr><tr><td><strong>HTTP Title</strong></td><td><code>Directory listing for /</code></td><td>Returned by endpoint</td><td>High (observed)</td></tr><tr><td><strong>Command Handler</strong></td><td><code>hxxp://182[.]92[.]78[.]7:8888/cmd.jsp</code></td><td>JSP invokes <code>Runtime.getRuntime().exec(cmd)</code></td><td>High (static source)</td></tr><tr><td><strong>Webshell Handler</strong></td><td><code>hxxp://182[.]92[.]78[.]7:8888/webshell.jsp</code></td><td>JSP invokes <code>Runtime.getRuntime().exec(request.getParameter("cmd"))</code></td><td>High (static source)</td></tr><tr><td><strong>Java Payload Source</strong></td><td><code>hxxp://182[.]92[.]78[.]7:8888/basic/payload.java</code></td><td>Decompiled dynamic servlet payload</td><td>High (static source)</td></tr><tr><td><strong>SOCKS Probe</strong></td><td><code>hxxp://182[.]92[.]78[.]7:8888/sp.py</code></td><td>Local SOCKS5 pivot probe</td><td>High (static source)</td></tr><tr><td><strong>GeoServer Script</strong></td><td><code>hxxp://182[.]92[.]78[.]7:8888/1.sh</code></td><td>Queries GeoServer monitor API with hardcoded Basic Auth</td><td>High (static source)</td></tr><tr><td><strong>Tunneling Candidate</strong></td><td><code>hxxp://182[.]92[.]78[.]7:8888/chx</code></td><td>64-bit statically linked Go ELF</td><td>High (file type); medium (purpose)</td></tr><tr><td><strong>Tunneling Filename</strong></td><td><code>hxxp://182[.]92[.]78[.]7:8888/chisel.gz</code></td><td>Chisel-labelled file; zero-byte content acquired</td><td>High (filename); low (function)</td></tr><tr><td><strong>Internal Target</strong></td><td><code>192[.]18[.]1[.]1:22</code></td><td>SOCKS probe target</td><td>High (static source)</td></tr><tr><td><strong>Internal Target</strong></td><td><code>192[.]18[.]1[.]2:3306</code></td><td>SOCKS probe target</td><td>High (static source)</td></tr><tr><td><strong>Internal Target</strong></td><td><code>192[.]18[.]1[.]4:6379</code></td><td>SOCKS probe target</td><td>High (static source)</td></tr><tr><td><strong>External Host</strong></td><td><code>www[.]hlxdtdl[.]com</code></td><td>GeoServer monitor request source in <code>1.sh</code></td><td>High (static source); not independently validated</td></tr><tr><td><strong>SHA-256</strong></td><td><code>75fc431ce030047e6dafc6c5d787ef5d8a4a23c9da3ba8fb239d869d46784dc7</code></td><td>Acquired <code>chx</code></td><td>High (computed)</td></tr><tr><td><strong>SHA-256</strong></td><td><code>c5b6c33c0b07f827e6cd65176a6c4aa7a4aca2ad10e1d56286ae416b639b89a4</code></td><td>Acquired <code>payload.java</code></td><td>High (computed)</td></tr><tr><td><strong>SHA-256</strong></td><td><code>d72952242e213853bc04fba44ea7c8cb2ea4bea22eabf07e293543379480853e</code></td><td>Acquired <code>cmd.jsp</code></td><td>High (computed)</td></tr><tr><td><strong>SHA-256</strong></td><td><code>9f7e13edc3365ee1c06f58e95fbb51077b5bb0556cbd3bb49ac8c8216a1a4901</code></td><td>Acquired <code>webshell.jsp</code></td><td>High (computed)</td></tr><tr><td><strong>SHA-256</strong></td><td><code>edd9227f6ffbca2a42fb4aaa44afdab9631df9b1ffae71474fa9eeef9ee92430</code></td><td>Acquired <code>sp.py</code></td><td>High (computed)</td></tr><tr><td><strong>SHA-256</strong></td><td><code>60b93d61103e1163ed935ee4a447a1e2f17a5817cf188b3f5512149e21a3db26</code></td><td>Acquired <code>1.sh</code></td><td>High (computed)</td></tr><tr><td><strong>SHA-256</strong></td><td><code>8e03090fee16f6e0ee2e436af8e51d0c3deed6d9f0db80dec048e668fc009a48</code></td><td>Acquired <code>tmpaddon</code> ZIP archive</td><td>High (computed)</td></tr></tbody></table>
+<h3 id="windows-lnk-findings">Windows LNK Findings</h3>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th>File</th><th>Relative Path</th><th>Working Directory</th><th>Arguments / Command Hints</th></tr></thead><tbody><tr><td><em>None observed in the bounded listing or acquisition</em></td><td></td><td></td><td></td></tr></tbody></table>
+<p>The absence of a visible LNK file is limited to the acquired root and selected descendants. It does not exclude unlisted or inaccessible content.</p>
+<h3 id="pe-candidates">PE Candidates</h3>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th>Candidate</th><th>Source</th><th>Architecture</th><th>Entry Point</th><th>Suspicious Sections</th><th>SHA-256</th></tr></thead><tbody><tr><td><em>None observed</em></td><td></td><td></td><td></td><td></td><td></td></tr></tbody></table>
+<p><code>chx</code> is an ELF executable, not a PE. No Windows PE was acquired in the bounded pass.</p>
+<h3 id="linux-elf-candidates">Linux ELF Candidates</h3>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th>Candidate</th><th>Source</th><th>Architecture</th><th>Static observations</th><th>SHA-256</th></tr></thead><tbody><tr><td><code>chx</code></td><td>Root-level acquisition</td><td>x86-64</td><td>Statically linked Go executable; stripped; Go BuildID present; runtime not executed</td><td><code>75fc431ce030047e6dafc6c5d787ef5d8a4a23c9da3ba8fb239d869d46784dc7</code></td></tr></tbody></table>
+<p>The file name <code>chx</code> and co-location with <code>chisel.gz</code> are consistent with a tunneling or pivoting theme, but the exact tool identity and behavior remain unconfirmed without safe reverse engineering.</p>
+<h2 id="deep-technical-threat-analysis">Deep Technical Threat Analysis</h2>
+<h3 id="1-executive-technical-assessment">1. Executive Technical Assessment</h3>
+<p>The endpoint at <code>182[.]92[.]78[.]7:8888</code> is assessed as <strong>high-confidence suspicious and likely compromised or intentionally operated as a post-compromise Linux staging node</strong>. Unlike a simple exposed directory, this host exposes working command-execution handlers and a Java payload with a broad remote-administration feature set. The local SOCKS probe provides concrete evidence of intended internal-network reachability testing against SSH, MySQL, and Redis services.[2] [3] [4] [5]</p>
+<p>The most likely operational role is a <strong>Java application or servlet-container compromise combined with Linux pivoting and data-access activity</strong>. The host may also be an operator workspace or test node rather than a victim server; attribution, persistence, and successful use remain unproven.</p>
+<h3 id="2-artifact-inventory">2. Artifact Inventory</h3>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th>Artifact</th><th>Type</th><th>Size</th><th>SHA-256</th><th>Notes</th></tr></thead><tbody><tr><td><code>cmd.jsp</code></td><td>JSP command handler</td><td>568 bytes</td><td><code>d72952242e213853bc04fba44ea7c8cb2ea4bea22eabf07e293543379480853e</code></td><td>Executes <code>cmd</code> through Java <code>Runtime</code> and returns stdout/stderr.</td></tr><tr><td><code>webshell.jsp</code></td><td>JSP webshell</td><td>347 bytes</td><td><code>9f7e13edc3365ee1c06f58e95fbb51077b5bb0556cbd3bb49ac8c8216a1a4901</code></td><td>Executes request-supplied <code>cmd</code> and returns stdout.</td></tr><tr><td><code>payload.java</code></td><td>Decompiled Java payload</td><td>64,042 bytes</td><td><code>c5b6c33c0b07f827e6cd65176a6c4aa7a4aca2ad10e1d56286ae416b639b89a4</code></td><td>Session-backed dynamic loader; command, screen, file, system, environment, and JDBC methods.</td></tr><tr><td><code>sp.py</code></td><td>Python SOCKS5 probe</td><td>785 bytes</td><td><code>edd9227f6ffbca2a42fb4aaa44afdab9631df9b1ffae71474fa9eeef9ee92430</code></td><td>Tests internal SSH, MySQL, and Redis endpoints through <code>127.0.0.1:1080</code>.</td></tr><tr><td><code>1.sh</code></td><td>Shell request-harvesting script</td><td>1,321 bytes</td><td><code>60b93d61103e1163ed935ee4a447a1e2f17a5817cf188b3f5512149e21a3db26</code></td><td>Calls GeoServer monitor REST endpoints with hardcoded credentials.</td></tr><tr><td><code>chx</code></td><td>ELF executable</td><td>8,654,848 bytes</td><td><code>75fc431ce030047e6dafc6c5d787ef5d8a4a23c9da3ba8fb239d869d46784dc7</code></td><td>Statically linked x86-64 Go binary; execution and reverse engineering not performed.</td></tr><tr><td><code>chisel.gz</code></td><td>Gzip-labelled file</td><td>0 bytes</td><td><code>e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855</code></td><td>Empty despite tunneling-oriented filename.</td></tr><tr><td><code>tmpaddon</code></td><td>ZIP archive</td><td>511,815 bytes</td><td><code>8e03090fee16f6e0ee2e436af8e51d0c3deed6d9f0db80dec048e668fc009a48</code></td><td>Contains <code>gmpopenh264.info</code> and <code>libgmpopenh264.so</code>; contents not executed or extracted.</td></tr><tr><td><code>payload.java</code></td><td>Java source</td><td>1,556 lines</td><td>Same as above</td><td>File is decompiled CFR output and should be treated as source evidence, not proof of runtime deployment.</td></tr><tr><td><code>workspaces.json</code></td><td>JSON</td><td>0 bytes</td><td><code>e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855</code></td><td>Empty file in GeoServer-labelled directory.</td></tr></tbody></table>
+<p>The <code>payload.java</code> byte count is not reproduced in this dossier because the acquisition record used line-count and hash validation; the hash is the authoritative artifact identifier.</p>
+<h3 id="3-script-and-payload-behaviors">3. Script and Payload Behaviors</h3>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th>Behavior</th><th>Evidence</th><th>Assessment</th></tr></thead><tbody><tr><td>Direct OS command execution</td><td><code>cmd.jsp</code>, <code>webshell.jsp</code>, and <code>payload.java</code> call Java runtime execution APIs</td><td>Confirmed capability; execution against the host was not attempted.</td></tr><tr><td>Dynamic class loading</td><td><code>include()</code> calls <code>defineClass()</code> on supplied bytecode and stores the resulting class in an HTTP-session map</td><td>Strongly supports modular in-memory payload execution.</td></tr><tr><td>Session persistence</td><td>Payload maintains <code>sessionMap</code>, <code>httpSession</code>, and loaded classes</td><td>Supports persistence across requests within an application session; host-level persistence not established.</td></tr><tr><td>Host discovery</td><td><code>getBasicsInfo( )</code> returns OS, architecture, user, paths, properties, local IPs, and environment variables</td><td>Confirmed collection capability.</td></tr><tr><td>Screen capture</td><td><code>screen()</code> uses <code>java.awt.Robot</code> and writes a PNG image</td><td>Confirmed screen-capture capability; no image was collected.</td></tr><tr><td>File read/write</td><td>Payload contains file listing, read, and copy operations</td><td>Confirmed file-manipulation capability; no target files were accessed.</td></tr><tr><td>Database access</td><td><code>execSql()</code> supports MySQL, Oracle, SQL Server, and PostgreSQL JDBC drivers</td><td>Confirmed database-query capability; no connection was attempted.</td></tr><tr><td>Internal service probing</td><td><code>sp.py</code> negotiates SOCKS5 through localhost and targets ports 22, 3306, and 6379</td><td>Confirmed probe logic; no probe was run.</td></tr><tr><td>GeoServer request harvesting</td><td><code>1.sh</code> loops over request IDs and prints path, query, method, status, service, operation, remote address, user, and body prefix</td><td>Confirmed collection logic; the external GeoServer was not queried.</td></tr><tr><td>Tunneling candidate</td><td><code>chx</code> ELF plus <code>chisel.gz</code> filename</td><td>Suspicious contextual indicator; exact behavior unverified.</td></tr></tbody></table>
+<h3 id="4-network-indicators">4. Network Indicators</h3>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th>Indicator ID</th><th>URL / Endpoint</th><th>Associated Evidence</th></tr></thead><tbody><tr><td>NI-001</td><td><code>hxxp://182[.]92[.]78[.]7:8888/</code></td><td>Public Python directory listing.</td></tr><tr><td>NI-002</td><td><code>hxxp://182[.]92[.]78[.]7:8888/cmd.jsp</code></td><td>JSP arbitrary command handler.</td></tr><tr><td>NI-003</td><td><code>hxxp://182[.]92[.]78[.]7:8888/webshell.jsp</code></td><td>JSP webshell with <code>cmd</code> parameter.</td></tr><tr><td>NI-004</td><td><code>hxxp://182[.]92[.]78[.]7:8888/basic/payload.java</code></td><td>Dynamic Java payload source.</td></tr><tr><td>NI-005</td><td><code>hxxp://182[.]92[.]78[.]7:8888/sp.py</code></td><td>Local SOCKS5 internal-service probe.</td></tr><tr><td>NI-006</td><td><code>hxxp://182[.]92[.]78[.]7:8888/1.sh</code></td><td>GeoServer request-monitor harvesting script.</td></tr><tr><td>NI-007</td><td><code>hxxp://182[.]92[.]78[.]7:8888/chx</code></td><td>Acquired x86-64 ELF candidate.</td></tr><tr><td>NI-008</td><td><code>hxxp://182[.]92[.]78[.]7:8888/chisel.gz</code></td><td>Empty Chisel-labelled object.</td></tr><tr><td>NI-009</td><td><code>hxxp://www[.]hlxdtdl[.]com/geoserver/rest/monitor/requests/</code></td><td>External GeoServer API base path embedded in <code>1.sh</code>; not contacted.</td></tr><tr><td>NI-010</td><td><code>192[.]18[.]1[.]1:22</code></td><td>Internal SSH target encoded in <code>sp.py</code>.</td></tr><tr><td>NI-011</td><td><code>192[.]18[.]1[.]2:3306</code></td><td>Internal MySQL target encoded in <code>sp.py</code>.</td></tr><tr><td>NI-012</td><td><code>192[.]18[.]1[.]4:6379</code></td><td>Internal Redis target encoded in <code>sp.py</code>.</td></tr><tr><td>NI-013</td><td><code>127[.]0[.]0[.]1:1080</code></td><td>Local SOCKS5 proxy endpoint encoded in <code>sp.py</code>.</td></tr></tbody></table>
+<p>No live C2 callback, victim IP, authentication token, or successful internal connection was established from this bounded acquisition.</p>
+<h3 id="5-cross-cluster-correlation">5. Cross-Cluster Correlation</h3>
+<p>The strongest relationship is <strong>tradecraft-level overlap</strong> with the supplied <code>217[.]216[.]79[.]49:8085</code> cluster: both expose Chisel-labelled tunneling material, web-facing handlers, and Windows/Linux-adjacent staging artifacts. The current endpoint differs in that it presents concrete Java webshell and Linux pivot evidence rather than primarily filename-based indicators.[1] [8]</p>
+<p>A secondary relationship exists with the supplied <code>93[.]152[.]223[.]39:8089</code> cluster through web exploitation, exposed server-side code, credential-oriented collection, and C2/staging themes. However, the current endpoint contains no directly observed shared hash, certificate, wallet, domain ownership, or payload family.[9]</p>
+<p>The supplied <code>150[.]241[.]65[.]250:889</code> and <code>2[.]27[.]63[.]244:9999</code> clusters show broader staging and operator-workspace similarities, but no direct current-host indicator links were established.[10] [11]</p>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th>Correlation</th><th>Evidence</th><th>Confidence</th></tr></thead><tbody><tr><td>Shared tunneling/staging tradecraft with <code>217[.]216[.]79[.]49</code></td><td>Chisel-labelled artifacts and exposed server-side handlers</td><td>Medium</td></tr><tr><td>Shared web exploitation / credential-access theme with <code>93[.]152[.]223[.]39</code></td><td>Webshell-style code, server-side collection, exposed keys/credential capability</td><td>Medium</td></tr><tr><td>Shared Linux staging model with <code>150[.]241[.]65[.]250</code></td><td>Linux workspace artefacts and operational scripts</td><td>Low-to-medium</td></tr><tr><td>Shared operator identity</td><td>No shared hashes, certificates, credentials, or exact payload family</td><td>Not established</td></tr><tr><td>Direct malware-family attribution</td><td>No C2 configuration or runtime telemetry acquired</td><td>Not established</td></tr></tbody></table>
+<h3 id="6-secrets-and-sensitive-material">6. Secrets and Sensitive Material</h3>
+<p>The most important exposure is not a recovered secret value but <strong>service-side access capability</strong>. The JSP handlers and Java payload could expose files, process output, environment variables, screen data, servlet context, and database contents if reachable in a live servlet-container context.[2] [3] [4] The literal <code>admin:geoserver</code> credential in <code>1.sh</code> should be treated as compromised if it was valid for any owned GeoServer deployment.[7]</p>
+<p>The publicly indexed <code>ssh-b0Lv1r4VfNpp/</code> directory and the host’s Unix/X11 runtime paths are sensitive locations. Their presence does not prove that private keys, active sockets, or usable session material were downloadable, because descendants were not fully acquired.</p>
+<h3 id="7-recommended-defensive-actions">7. Recommended Defensive Actions</h3>
+<ol>
+<li>
+<p>Remove unauthenticated public access to port <code>8888</code> while preserving web-server, servlet-container, authentication, process, firewall, and network-flow logs.</p>
+</li>
+<li>
+<p>Treat the host as potentially compromised. Isolate it from production networks using an approved containment procedure, preserving volatile state before eradication where operationally safe.</p>
+</li>
+<li>
+<p>Acquire a forensic image, process and socket state, memory, cron/systemd state, Java/Tomcat/Jetty configuration, deployed web applications, web-access logs, and the complete exposed directory under controlled evidence handling.</p>
+</li>
+<li>
+<p>Search application and proxy logs for requests to <code>cmd.jsp</code>, <code>webshell.jsp</code>, <code>payload.java</code>, <code>sp.py</code>, <code>chx</code>, and requests containing <code>cmd</code>, <code>cmdLine</code>, <code>evalClassName</code>, <code>methodName</code>, <code>binCode</code>, <code>dbHost</code>, or <code>execSql</code> parameters.</p>
+</li>
+<li>
+<p>Hunt for outbound or proxied connections from the affected host to internal ports <code>22</code>, <code>3306</code>, and <code>6379</code>, especially through local SOCKS listeners on <code>127.0.0.1:1080</code>.</p>
+</li>
+<li>
+<p>Rotate or revoke the GeoServer credential represented by <code>admin:geoserver</code> after validating ownership, and review GeoServer monitor logs for request IDs in the range <code>632815–632914</code> and for access from the exposed host or related infrastructure.</p>
+</li>
+<li>
+<p>Rotate credentials available to the Java process, including database passwords, cloud tokens, SSH keys, application secrets, and environment-based credentials. Do this through a trusted administrative path rather than through the exposed service.</p>
+</li>
+<li>
+<p>Reverse-engineer <code>chx</code> and inspect <code>tmpaddon</code> in an isolated analysis environment. Do not execute either artifact on production systems; preserve originals and work from copies.</p>
+</li>
+<li>
+<p>Review the supplied <code>217[.]216[.]79[.]49</code>, <code>93[.]152[.]223[.]39</code>, <code>150[.]241[.]65[.]250</code>, and <code>2[.]27[.]63[.]244</code> indicators in enterprise telemetry for temporal or infrastructure overlap, while treating correlation as unconfirmed unless shared content-level evidence is found.</p>
+</li>
+<li>
+<p>Examine the Java deployment path for unauthorized JSPs, session attributes, class-loading hooks, scheduled tasks, shell history, SSH keys, and persistence mechanisms. Rebuild the host from trusted media if integrity cannot be established.</p>
+</li>
+</ol>
+<h2 id="conclusion">Conclusion</h2>
+<p>The endpoint at <code>182[.]92[.]78[.]7:8888</code> is not merely an exposed file repository. Passive acquisition confirmed two JSP command-execution handlers, a modular Java payload with broad post-compromise capabilities, an internal SOCKS5 service-probing utility, GeoServer request-harvesting logic, and a Chisel-labelled ELF candidate.[1] [2] [3] [4] [5] The host should therefore be prioritized as <strong>probable compromised or deliberately operated post-compromise infrastructure</strong>.</p>
+<p>The evidence supports high-priority containment and forensic preservation. It does not establish attribution, successful victim access, current operator control, or the runtime execution of any artifact. All artifacts in this assessment were handled as untrusted evidence and were not executed.</p> </div> <!-- Companion Reports (if any) -->  <!-- Dossier Footer & Author Monogram --> <footer class="article-dossier-footer" data-astro-cid-necseomn> <div class="article-author-card" data-astro-cid-necseomn> <img src="/logo-me.png" alt="Ahmed Elessaway (xElessaway)" class="article-author-avatar-img" data-astro-cid-necseomn> <div class="article-author-info" data-astro-cid-necseomn> <p class="eyebrow" data-astro-cid-necseomn>Investigator / Author</p> <h3 class="article-author-name" data-astro-cid-necseomn>Ahmed Elessaway (xElessaway)</h3> <p class="article-author-bio" data-astro-cid-necseomn>
+Cybersecurity researcher specializing in DFIR, threat intelligence, and OSINT investigation methodologies.
+</p> <div class="article-author-links" data-astro-cid-necseomn> <a href="https://www.linkedin.com/in/ahmedelessaway/" target="_blank" rel="noreferrer" class="author-social-pill" data-astro-cid-necseomn> <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="currentColor" class aria-hidden="true"><path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z"></path></svg> <span data-astro-cid-necseomn>LinkedIn</span> </a><a href="https://x.com/ahmed_elessaway" target="_blank" rel="noreferrer" class="author-social-pill" data-astro-cid-necseomn> <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="currentColor" class aria-hidden="true"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"></path></svg> <span data-astro-cid-necseomn>X</span> </a><a href="https://xelessaway.medium.com/" target="_blank" rel="noreferrer" class="author-social-pill" data-astro-cid-necseomn> <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="currentColor" class aria-hidden="true"><path d="M13.54 12a6.8 6.8 0 01-6.77 6.82A6.8 6.8 0 010 12a6.8 6.8 0 016.77-6.82A6.8 6.8 0 0113.54 12zM20.96 12c0 3.54-1.51 6.42-3.38 6.42-1.87 0-3.39-2.88-3.39-6.42s1.52-6.42 3.39-6.42 3.38 2.88 3.38 6.42M24 12c0 3.17-.53 5.75-1.19 5.75-.66 0-1.19-2.58-1.19-5.75s.53-5.75 1.19-5.75C23.47 6.25 24 8.83 24 12z"></path></svg> <span data-astro-cid-necseomn>Medium</span> </a> </div> </div> </div> <div class="article-nav-actions" data-astro-cid-necseomn> <a href="/threat-intelligence/" class="button button-primary" data-astro-cid-necseomn> <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class aria-hidden="true"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
+Back to Dossiers Feed
+</a> <a href="/blog/" class="button button-ghost" data-astro-cid-necseomn>
+Browse Research Archive
+<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class aria-hidden="true"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg> </a> </div> </footer> </main> </div>  </main> <footer class="site-footer"> <div class="container footer-grid"> <div class="footer-brand-wrap"> <a class="footer-brand" href="/"> <img src="/logo-me.png" alt="Ahmed Elessaway" class="footer-avatar"> <span>xElessaway</span> </a> <p class="footer-copy">Field notes, investigations, and practical security research.</p> </div> <div class="footer-links footer-links-inline"> <a href="/" class="footer-nav-link">Home</a><a href="/blog/" class="footer-nav-link">Research</a><a href="/threat-intelligence/" class="footer-nav-link">Threat Intel</a><a href="/ctf/" class="footer-nav-link">Practice</a><a href="/about/" class="footer-nav-link">Profile</a> </div> <div class="footer-links footer-links-inline footer-links-right"> <a href="https://www.linkedin.com/in/ahmedelessaway/" target="_blank" rel="noreferrer" class="footer-social-link" title="LinkedIn"> <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="currentColor" class aria-hidden="true"><path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z"></path></svg> <span>LinkedIn</span> </a><a href="https://x.com/ahmed_elessaway" target="_blank" rel="noreferrer" class="footer-social-link" title="X"> <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="currentColor" class aria-hidden="true"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"></path></svg> <span>X</span> </a><a href="https://xelessaway.medium.com/" target="_blank" rel="noreferrer" class="footer-social-link" title="Medium"> <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="currentColor" class aria-hidden="true"><path d="M13.54 12a6.8 6.8 0 01-6.77 6.82A6.8 6.8 0 010 12a6.8 6.8 0 016.77-6.82A6.8 6.8 0 0113.54 12zM20.96 12c0 3.54-1.51 6.42-3.38 6.42-1.87 0-3.39-2.88-3.39-6.42s1.52-6.42 3.39-6.42 3.38 2.88 3.38 6.42M24 12c0 3.17-.53 5.75-1.19 5.75-.66 0-1.19-2.58-1.19-5.75s.53-5.75 1.19-5.75C23.47 6.25 24 8.83 24 12z"></path></svg> <span>Medium</span> </a> </div> </div> </footer> <dialog class="image-lightbox" data-image-lightbox aria-label="Expanded image viewer"> <button class="image-lightbox-close" type="button" data-image-lightbox-close aria-label="Close image viewer">
+Close
+</button> <img class="image-lightbox-media" data-image-lightbox-media alt=""> <p class="image-lightbox-caption" data-image-lightbox-caption hidden></p> </dialog> <script>
+      const lightbox = document.querySelector("[data-image-lightbox]");
+      const lightboxMedia = lightbox?.querySelector("[data-image-lightbox-media]");
+      const lightboxCaption = lightbox?.querySelector("[data-image-lightbox-caption]");
+      const lightboxClose = lightbox?.querySelector("[data-image-lightbox-close]");
+
+      const isZoomableImage = (element) =>
+        element instanceof HTMLImageElement &&
+        (element.matches(".prose img") || element.matches(".challenge-image") || element.hasAttribute("data-zoomable-image"));
+
+      const setZoomableState = () => {
+        document.querySelectorAll(".prose img, .challenge-image, img[data-zoomable-image]").forEach((element) => {
+          if (element instanceof HTMLImageElement) {
+            element.tabIndex = 0;
+            element.setAttribute("role", "button");
+            element.setAttribute("aria-haspopup", "dialog");
+          }
+        });
+      };
+
+      const openLightbox = (image) => {
+        if (!(lightbox instanceof HTMLDialogElement) || !(lightboxMedia instanceof HTMLImageElement)) {
+          return;
+        }
+
+        lightboxMedia.src = image.currentSrc || image.src;
+        lightboxMedia.alt = image.alt || "";
+
+        if (lightboxCaption instanceof HTMLElement) {
+          const caption = image.alt?.trim();
+          lightboxCaption.textContent = caption ?? "";
+          lightboxCaption.hidden = !caption;
+        }
+
+        lightbox.showModal();
+      };
+
+      const closeLightbox = () => {
+        if (lightbox instanceof HTMLDialogElement && lightbox.open) {
+          lightbox.close();
+        }
+      };
+
+      document.addEventListener("click", (event) => {
+        const target = event.target;
+
+        if (target instanceof Element) {
+          const image = target.closest(".prose img, .challenge-image, img[data-zoomable-image]");
+
+          if (isZoomableImage(image)) {
+            event.preventDefault();
+            openLightbox(image);
+            return;
+          }
+        }
+
+        if (target === lightbox || target === lightboxClose) {
+          closeLightbox();
+        }
+      });
+
+      document.addEventListener("keydown", (event) => {
+        const target = event.target;
+
+        if ((event.key === "Enter" || event.key === " ") && isZoomableImage(target)) {
+          event.preventDefault();
+          openLightbox(target);
+        }
+      });
+
+      const setupCollapsibleTables = () => {
+        document.querySelectorAll(".prose table").forEach((table) => {
+          if (!(table instanceof HTMLTableElement) || table.dataset.collapsedInitialized) {
+            return;
+          }
+          table.dataset.collapsedInitialized = "true";
+
+          const rows = table.querySelectorAll("tbody tr");
+          const rowCount = rows.length;
+
+          // Only collapse tables that have more than 10 rows
+          if (rowCount <= 10) {
+            // Still ensure responsive wrapper if not already present
+            const existingWrap = table.closest(".table-responsive-wrap, .table-collapse-wrap");
+            if (!existingWrap) {
+              const resWrap = document.createElement("div");
+              resWrap.className = "table-responsive-wrap";
+              table.parentNode?.insertBefore(resWrap, table);
+              resWrap.appendChild(table);
+            }
+            return;
+          }
+
+          // Build collapsible container
+          const collapseWrap = document.createElement("div");
+          collapseWrap.className = "table-collapse-wrap";
+
+          const viewport = document.createElement("div");
+          viewport.className = "table-collapse-viewport is-collapsed";
+
+          const resWrap = document.createElement("div");
+          resWrap.className = "table-responsive-wrap";
+
+          const fadeOverlay = document.createElement("div");
+          fadeOverlay.className = "table-fade-overlay";
+
+          const toggleBar = document.createElement("div");
+          toggleBar.className = "table-toggle-bar";
+
+          const toggleBtn = document.createElement("button");
+          toggleBtn.type = "button";
+          toggleBtn.className = "table-toggle-btn";
+          toggleBtn.setAttribute("aria-expanded", "false");
+          toggleBtn.innerHTML = `
+            <span class="table-doodle-stamp">
+              <span class="pulse-dot" aria-hidden="true"></span>
+              <span class="table-toggle-label">SHOW ALL ${rowCount} RECORDS</span>
+            </span>
+            <svg class="table-doodle-chevron" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <path d="M6 9l6 6 6-6"></path>
+            </svg>
+          `;
+
+          toggleBtn.addEventListener("click", () => {
+            const isCollapsed = viewport.classList.toggle("is-collapsed");
+            const label = toggleBtn.querySelector(".table-toggle-label");
+            if (isCollapsed) {
+              toggleBtn.classList.remove("is-expanded");
+              toggleBtn.setAttribute("aria-expanded", "false");
+              if (label) label.textContent = `SHOW ALL ${rowCount} RECORDS`;
+              collapseWrap.scrollIntoView({ behavior: "smooth", block: "nearest" });
+            } else {
+              toggleBtn.classList.add("is-expanded");
+              toggleBtn.setAttribute("aria-expanded", "true");
+              if (label) label.textContent = `COLLAPSE TABLE (${rowCount} RECORDS)`;
+            }
+          });
+
+          toggleBar.appendChild(toggleBtn);
+
+          // Insert structure around table
+          table.parentNode?.insertBefore(collapseWrap, table);
+          resWrap.appendChild(table);
+          viewport.appendChild(resWrap);
+          viewport.appendChild(fadeOverlay);
+          collapseWrap.appendChild(viewport);
+          collapseWrap.appendChild(toggleBar);
+        });
+      };
+
+      setZoomableState();
+      setupCollapsibleTables();
+      document.addEventListener("astro:page-load", () => {
+        setZoomableState();
+        setupCollapsibleTables();
+      });
+    </script> </body> </html> 
