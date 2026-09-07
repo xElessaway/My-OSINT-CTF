@@ -1,0 +1,625 @@
+---
+import { getCollection } from "astro:content";
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import Icon from "../../components/Icon.astro";
+import { withBase } from "../../utils/paths";
+
+const rawTools = await getCollection("tools");
+const tools = rawTools.sort((a, b) => {
+  if (a.data.featured && !b.data.featured) return -1;
+  if (!a.data.featured && b.data.featured) return 1;
+  if (a.data.order && b.data.order) return a.data.order - b.data.order;
+  return a.data.name.localeCompare(b.data.name);
+});
+
+// Collect unique types and OSs for filter chips
+const allTypes = ["All", ...new Set(tools.map((t) => t.data.type).filter(Boolean))];
+const allOS = ["All", "Cross-Platform", "Firefox", "Chrome", "Windows", "Linux", "macOS"];
+---
+
+<BaseLayout
+  title="Security Tools & Arsenal | Ahmed Elessaway (xElessaway)"
+  description="Specialized cybersecurity software, browser triage extensions, threat intelligence hunters, and DFIR analysis tools built for security practitioners."
+>
+  <div class="archive-container">
+    <!-- Header Block -->
+    <header class="archive-header-block">
+      <div class="archive-title-wrap">
+        <div class="status-stamp"><span></span>Practitioner Arsenal</div>
+        <h1 class="archive-headline">
+          SECURITY TOOLS
+          <svg class="archive-squiggle" viewBox="0 0 100 10" preserveAspectRatio="none" aria-hidden="true">
+            <path d="M0 5 Q 50 10 100 0" fill="transparent" stroke="currentColor" stroke-width="4"></path>
+          </svg>
+        </h1>
+        <p class="archive-subhead">
+          Specialized cybersecurity utilities, browser-native sandbox extensions, C2 triage frameworks, and threat intelligence tools engineered for active operations.
+        </p>
+      </div>
+
+      <!-- Live Search Box -->
+      <div class="archive-search-box">
+        <Icon name="search" size={20} class="archive-search-icon" />
+        <input
+          type="search"
+          id="tool-search"
+          class="archive-search-input"
+          placeholder="Search by tool name, capability, platform, or tag..."
+          autocomplete="off"
+        />
+      </div>
+    </header>
+
+    <!-- Filters Section -->
+    <div class="tools-filter-section">
+      <div class="tools-filter-row">
+        <span class="tools-filter-label"><Icon name="wrench" size={14} /> Category:</span>
+        <div class="tools-chips-wrap" id="type-filter-group">
+          {
+            allTypes.map((type, idx) => (
+              <button
+                type="button"
+                class:list={["tool-filter-chip", idx === 0 && "is-active"]}
+                data-filter-type={type}
+              >
+                {type}
+              </button>
+            ))
+          }
+        </div>
+      </div>
+
+      <div class="tools-filter-row">
+        <span class="tools-filter-label"><Icon name="terminal" size={14} /> Platform / OS:</span>
+        <div class="tools-chips-wrap" id="os-filter-group">
+          {
+            allOS.map((os, idx) => (
+              <button
+                type="button"
+                class:list={["tool-filter-chip", idx === 0 && "is-active"]}
+                data-filter-os={os}
+              >
+                {os}
+              </button>
+            ))
+          }
+        </div>
+      </div>
+    </div>
+
+    <!-- Tool Cards Grid -->
+    <div class="tools-cards-grid" id="tools-cards-grid">
+      {
+        tools.map((tool) => {
+          const searchTokens = [
+            tool.data.name,
+            tool.data.tagline,
+            tool.data.description,
+            tool.data.type,
+            ...(tool.data.os || []),
+            ...(tool.data.tags || []),
+            tool.slug
+          ]
+            .filter(Boolean)
+            .join(" ")
+            .toLowerCase();
+
+          return (
+            <article
+              class:list={["tool-card", tool.data.featured && "is-featured"]}
+              data-tool-card
+              data-type={tool.data.type}
+              data-os={(tool.data.os || []).join("|")}
+              data-search={searchTokens}
+            >
+              <!-- Card Top Banner -->
+              <div class="tool-card-header">
+                <div class="tool-header-left">
+                  <div class="tool-icon-wrap">
+                    <Icon name={tool.data.icon || "wrench"} size={22} />
+                  </div>
+                  <div>
+                    <h2 class="tool-name">
+                      <a href={withBase(`/tools/${tool.slug}/`)}>{tool.data.name}</a>
+                    </h2>
+                    <span class="tool-tagline">{tool.data.tagline}</span>
+                  </div>
+                </div>
+
+                <div class="tool-badges">
+                  {tool.data.featured && <span class="badge-featured">FEATURED</span>}
+                  <span class="tool-type-badge">{tool.data.type}</span>
+                  <span class="tool-version-badge">v{tool.data.version}</span>
+                </div>
+              </div>
+
+              <!-- Card Description -->
+              <p class="tool-description">{tool.data.description}</p>
+
+              <!-- Supported OS & Platforms -->
+              <div class="tool-meta-section">
+                <div class="tool-meta-row">
+                  <span class="tool-meta-title">Supported OS:</span>
+                  <div class="tool-os-list">
+                    {(tool.data.os || []).map((os) => (
+                      <span class:list={["tool-os-chip", `os-${os.toLowerCase().replace(/[^a-z0-9]/g, "-")}`]}>
+                        {os}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+
+                {tool.data.tags && tool.data.tags.length > 0 && (
+                  <div class="tool-tags-cloud">
+                    {tool.data.tags.map((tag) => (
+                      <span class="archive-tag-chip">#{tag}</span>
+                    ))}
+                  </div>
+                )}
+              </div>
+
+              <!-- Card Actions / Direct Download -->
+              <div class="tool-card-actions">
+                <a
+                  href={tool.data.downloadUrl}
+                  class="button button-primary tool-download-btn"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  title={`Direct Download ${tool.data.name}`}
+                >
+                  <Icon name="download" size={16} />
+                  <span>Direct Download</span>
+                  <span class="btn-subtext">v{tool.data.version}</span>
+                </a>
+
+                {tool.data.githubUrl && (
+                  <a
+                    href={tool.data.githubUrl}
+                    class="button button-ghost tool-secondary-btn"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    title="View Source on GitHub"
+                  >
+                    <Icon name="github" size={16} />
+                    <span>Source Code</span>
+                  </a>
+                )}
+
+                <a
+                  href={withBase(`/tools/${tool.slug}/`)}
+                  class="button button-ghost tool-details-btn"
+                  title="Documentation & Usage Playbook"
+                >
+                  <Icon name="east" size={16} />
+                  <span>Playbook</span>
+                </a>
+              </div>
+            </article>
+          );
+        })
+      }
+    </div>
+
+    <!-- Empty State -->
+    <div id="tools-empty-state" class="tools-empty-state" style="display: none;">
+      <div class="tools-empty-content">
+        <Icon name="search" size={40} />
+        <h3>No tools found matching your criteria</h3>
+        <p>Try refining your search terms or resetting filters.</p>
+        <button type="button" class="button button-ghost" id="tools-reset-filters">
+          Reset All Filters
+        </button>
+      </div>
+    </div>
+  </div>
+</BaseLayout>
+
+<script>
+  let activeType = "All";
+  let activeOS = "All";
+  const searchInput = document.getElementById("tool-search") as HTMLInputElement | null;
+  const cards = [...document.querySelectorAll<HTMLElement>("[data-tool-card]")];
+  const emptyState = document.getElementById("tools-empty-state");
+  const resetBtn = document.getElementById("tools-reset-filters");
+
+  const filterCards = () => {
+    const query = (searchInput?.value || "").trim().toLowerCase();
+    let visibleCount = 0;
+
+    cards.forEach((card) => {
+      const type = card.getAttribute("data-type") || "";
+      const osAttr = card.getAttribute("data-os") || "";
+      const searchTokens = card.getAttribute("data-search") || "";
+
+      const matchesType = activeType === "All" || type === activeType;
+      const matchesOS =
+        activeOS === "All" ||
+        osAttr.split("|").some((o) => o.toLowerCase() === activeOS.toLowerCase()) ||
+        osAttr.toLowerCase().includes("cross-platform");
+      const matchesSearch = !query || searchTokens.includes(query);
+
+      const isVisible = matchesType && matchesOS && matchesSearch;
+      card.style.display = isVisible ? "flex" : "none";
+      if (isVisible) visibleCount++;
+    });
+
+    if (emptyState) {
+      emptyState.style.display = visibleCount === 0 ? "block" : "none";
+    }
+  };
+
+  searchInput?.addEventListener("input", filterCards);
+
+  // Type filter buttons
+  document.querySelectorAll<HTMLButtonElement>("#type-filter-group [data-filter-type]").forEach((btn) => {
+    btn.addEventListener("click", () => {
+      document.querySelectorAll("#type-filter-group [data-filter-type]").forEach((b) => b.classList.remove("is-active"));
+      btn.classList.add("is-active");
+      activeType = btn.getAttribute("data-filter-type") || "All";
+      filterCards();
+    });
+  });
+
+  // OS filter buttons
+  document.querySelectorAll<HTMLButtonElement>("#os-filter-group [data-filter-os]").forEach((btn) => {
+    btn.addEventListener("click", () => {
+      document.querySelectorAll("#os-filter-group [data-filter-os]").forEach((b) => b.classList.remove("is-active"));
+      btn.classList.add("is-active");
+      activeOS = btn.getAttribute("data-filter-os") || "All";
+      filterCards();
+    });
+  });
+
+  // Reset filters
+  resetBtn?.addEventListener("click", () => {
+    if (searchInput) searchInput.value = "";
+    activeType = "All";
+    activeOS = "All";
+
+    document.querySelectorAll("#type-filter-group [data-filter-type]").forEach((b, i) => b.classList.toggle("is-active", i === 0));
+    document.querySelectorAll("#os-filter-group [data-filter-os]").forEach((b, i) => b.classList.toggle("is-active", i === 0));
+
+    filterCards();
+  });
+</script>
+
+<style>
+  .tools-filter-section {
+    display: flex;
+    flex-direction: column;
+    gap: 0.85rem;
+    margin-bottom: 2rem;
+    padding: 1.25rem 1.5rem;
+    background: var(--surface);
+    border: var(--ink-border);
+    border-radius: var(--radius-md);
+    box-shadow: 2px 2px 0 var(--line);
+  }
+
+  .tools-filter-row {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    flex-wrap: wrap;
+  }
+
+  .tools-filter-label {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    font-size: 0.8rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--text-muted);
+    min-width: 140px;
+    flex-shrink: 0;
+  }
+
+  .tools-chips-wrap {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    flex-wrap: wrap;
+  }
+
+  .tool-filter-chip {
+    padding: 0.3rem 0.75rem;
+    font-size: 0.8rem;
+    font-weight: 700;
+    font-family: var(--font-mono);
+    color: var(--text);
+    background: var(--surface-panel);
+    border: 1px solid var(--line);
+    border-radius: var(--radius-sm);
+    cursor: pointer;
+    transition: all 0.15s ease;
+  }
+
+  .tool-filter-chip:hover {
+    background: var(--surface);
+    border-color: var(--text);
+    transform: translateY(-1px);
+  }
+
+  .tool-filter-chip.is-active {
+    background: var(--primary);
+    color: #ffffff;
+    border-color: var(--primary);
+    box-shadow: 1px 1px 0 var(--line);
+  }
+
+  /* Cards Grid */
+  .tools-cards-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1.75rem;
+  }
+
+  .tool-card {
+    display: flex;
+    flex-direction: column;
+    padding: 1.75rem;
+    background: var(--surface);
+    border: var(--ink-border);
+    border-radius: var(--radius-md);
+    box-shadow: 3px 3px 0 var(--line);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .tool-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 5px 5px 0 var(--line);
+  }
+
+  .tool-card.is-featured {
+    border-left: 5px solid var(--primary);
+  }
+
+  .tool-card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 1rem;
+    margin-bottom: 1rem;
+    flex-wrap: wrap;
+  }
+
+  .tool-header-left {
+    display: flex;
+    align-items: flex-start;
+    gap: 1rem;
+  }
+
+  .tool-icon-wrap {
+    width: 46px;
+    height: 46px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--surface-panel);
+    border: 1px solid var(--line);
+    border-radius: var(--radius-sm);
+    color: var(--primary);
+    flex-shrink: 0;
+  }
+
+  .tool-name {
+    margin: 0;
+    font-size: 1.35rem;
+    font-weight: 900;
+    line-height: 1.2;
+  }
+
+  .tool-name a {
+    color: var(--text);
+    text-decoration: none;
+    transition: color 0.15s ease;
+  }
+
+  .tool-name a:hover {
+    color: var(--primary);
+  }
+
+  .tool-tagline {
+    display: block;
+    margin-top: 0.25rem;
+    font-size: 0.88rem;
+    font-weight: 600;
+    color: var(--text-muted);
+  }
+
+  .tool-badges {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+  }
+
+  .badge-featured {
+    padding: 0.2rem 0.55rem;
+    font-size: 0.7rem;
+    font-weight: 900;
+    font-family: var(--font-mono);
+    background: var(--alert-soft);
+    color: var(--alert);
+    border: 1px solid var(--alert);
+    border-radius: 4px;
+    letter-spacing: 0.05em;
+  }
+
+  .tool-type-badge {
+    padding: 0.2rem 0.55rem;
+    font-size: 0.72rem;
+    font-weight: 800;
+    font-family: var(--font-mono);
+    background: var(--secondary-soft);
+    color: var(--secondary);
+    border: 1px solid var(--secondary);
+    border-radius: 4px;
+  }
+
+  .tool-version-badge {
+    padding: 0.2rem 0.5rem;
+    font-size: 0.72rem;
+    font-weight: 800;
+    font-family: var(--font-mono);
+    background: var(--surface-panel);
+    color: var(--text-muted);
+    border: 1px solid var(--line);
+    border-radius: 4px;
+  }
+
+  .tool-description {
+    font-size: 0.95rem;
+    line-height: 1.6;
+    color: var(--text);
+    margin: 0 0 1.25rem 0;
+  }
+
+  .tool-meta-section {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    margin-top: auto;
+    padding-top: 1rem;
+    border-top: 1px dashed var(--line);
+  }
+
+  .tool-meta-row {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    flex-wrap: wrap;
+  }
+
+  .tool-meta-title {
+    font-size: 0.78rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: var(--text-soft);
+  }
+
+  .tool-os-list {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    flex-wrap: wrap;
+  }
+
+  .tool-os-chip {
+    padding: 0.15rem 0.45rem;
+    font-size: 0.75rem;
+    font-weight: 700;
+    font-family: var(--font-mono);
+    background: var(--surface-panel);
+    color: var(--text-muted);
+    border: 1px solid var(--line);
+    border-radius: 4px;
+  }
+
+  .tool-os-chip.os-firefox {
+    border-color: #f97316;
+    color: #ea580c;
+    background: rgba(249, 115, 22, 0.1);
+  }
+
+  .tool-os-chip.os-chrome {
+    border-color: #3b82f6;
+    color: #2563eb;
+    background: rgba(59, 130, 246, 0.1);
+  }
+
+  .tool-os-chip.os-cross-platform {
+    border-color: #10b981;
+    color: #059669;
+    background: rgba(16, 185, 129, 0.1);
+  }
+
+  .tool-tags-cloud {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    flex-wrap: wrap;
+  }
+
+  .tool-card-actions {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin-top: 1.25rem;
+    flex-wrap: wrap;
+  }
+
+  .tool-download-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.65rem 1.25rem;
+    font-weight: 800;
+    text-decoration: none;
+    border-radius: var(--radius-sm);
+  }
+
+  .btn-subtext {
+    font-size: 0.75rem;
+    opacity: 0.85;
+    font-family: var(--font-mono);
+    margin-left: 0.2rem;
+  }
+
+  .tool-secondary-btn,
+  .tool-details-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 0.65rem 1rem;
+    font-weight: 700;
+    text-decoration: none;
+    border-radius: var(--radius-sm);
+  }
+
+  .tools-empty-state {
+    padding: 4rem 2rem;
+    text-align: center;
+    background: var(--surface);
+    border: 1px dashed var(--line);
+    border-radius: var(--radius-md);
+    margin-top: 2rem;
+  }
+
+  .tools-empty-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
+    color: var(--text-muted);
+  }
+
+  .tools-empty-content h3 {
+    margin: 0;
+    color: var(--text);
+  }
+
+  @media (max-width: 768px) {
+    .tools-filter-label {
+      min-width: 100%;
+    }
+
+    .tool-card-header {
+      flex-direction: column;
+    }
+
+    .tool-card-actions {
+      flex-direction: column;
+      align-items: stretch;
+    }
+
+    .tool-card-actions .button {
+      justify-content: center;
+    }
+  }
+</style>

@@ -174,7 +174,7 @@ const intakeTemplates = defineCollection({
     .object({
       id: z.string(),
       label: z.string(),
-      contentType: z.enum(["blog", "actors", "ctfCollections", "ctfChallenges"]),
+      contentType: z.enum(["blog", "actors", "ctfCollections", "ctfChallenges", "tools"]),
       targetPathPattern: z.string(),
       previewPathPattern: z.string(),
       fieldGroups: z.array(intakeFieldGroupSchema).min(1),
@@ -214,10 +214,32 @@ const intakeTemplates = defineCollection({
     })
 });
 
+const tools = defineCollection({
+  type: "content",
+  schema: z.object({
+    name: z.string(),
+    tagline: z.string(),
+    description: z.string(),
+    type: z.string(),
+    os: z.array(z.string()).default([]),
+    version: z.string().default("1.0.0"),
+    releaseDate: z.string().optional(),
+    icon: z.string().optional(),
+    downloadUrl: z.string().url(),
+    githubUrl: z.string().url().optional(),
+    docsUrl: z.string().url().optional(),
+    featured: z.boolean().default(false),
+    tags: z.array(z.string()).default([]),
+    order: z.number().int().optional()
+  })
+});
+
 export const collections = {
   blog,
   actors,
   ctfCollections,
   ctfChallenges,
-  intakeTemplates
+  intakeTemplates,
+  tools
 };
+

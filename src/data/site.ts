@@ -23,6 +23,7 @@ export const siteMeta = {
     { label: "Home", href: "/" },
     { label: "Research", href: "/blog/" },
     { label: "Threat Intel", href: "/threat-intelligence/" },
+    { label: "Tools", href: "/tools/" },
     { label: "Practice", href: "/ctf/" },
     { label: "Profile", href: "/about/" }
   ]

@@ -1,0 +1,389 @@
+---
+import { getCollection, render } from "astro:content";
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import Icon from "../../components/Icon.astro";
+import SocialIcon from "../../components/SocialIcon.astro";
+import { siteMeta } from "../../data/site";
+import { withBase } from "../../utils/paths";
+
+export async function getStaticPaths() {
+  const tools = await getCollection("tools");
+  return tools.map((entry) => ({
+    params: { slug: entry.slug },
+    props: { entry }
+  }));
+}
+
+const { entry } = Astro.props;
+const { Content } = await render(entry);
+---
+
+<BaseLayout
+  title={`${entry.data.name} | Security Tool & Playbook`}
+  description={entry.data.description || `${entry.data.name} - ${entry.data.tagline}`}
+  type="article"
+  section="Tools"
+  tags={entry.data.tags}
+>
+  <div class="article-dossier-container dossier-wide-container">
+    <!-- Top Breadcrumb Bar -->
+    <nav class="article-breadcrumb-bar">
+      <a href={withBase("/tools/")} class="article-back-link">
+        <Icon name="arrow_back" size={16} />
+        <span>Back to Tools Arsenal</span>
+      </a>
+      <span class="article-doc-id">TOOL_ID: {entry.slug.toUpperCase()}</span>
+    </nav>
+
+    <!-- Unified Tool Hero Header Card -->
+    <header class="article-dossier-header">
+      <div class="article-tape-sticker" aria-hidden="true"></div>
+
+      <div class="article-meta-ribbon">
+        <span class="article-type-pill">{entry.data.type.toUpperCase()}</span>
+        <span class="tool-version-pill">v{entry.data.version}</span>
+        {entry.data.featured && <span class="tool-featured-pill">FEATURED ARSENAL</span>}
+      </div>
+
+      <h1 class="article-title">{entry.data.name}</h1>
+      <p class="article-lede">{entry.data.tagline}</p>
+
+      <!-- Quick Specs Strip -->
+      <div class="article-info-strip">
+        <div class="article-info-item">
+          <Icon name="wrench" size={16} />
+          <span>Category: <strong>{entry.data.type}</strong></span>
+        </div>
+
+        {entry.data.releaseDate && (
+          <div class="article-info-item">
+            <Icon name="schedule" size={16} />
+            <span>Released: <strong>{entry.data.releaseDate}</strong></span>
+          </div>
+        )}
+
+        <div class="article-info-item">
+          <Icon name="terminal" size={16} />
+          <span>Platforms: <strong>{(entry.data.os || []).join(", ")}</strong></span>
+        </div>
+      </div>
+
+      <!-- Action Download Hero Banner -->
+      <div class="tool-hero-cta-banner">
+        <div class="tool-hero-cta-left">
+          <span class="cta-label">Direct Distribution:</span>
+          <p class="cta-subtext">Verified production bundle. Zero telemetry, safe in-browser operation.</p>
+        </div>
+
+        <div class="tool-hero-cta-buttons">
+          <a
+            href={entry.data.downloadUrl}
+            class="button button-primary hero-download-btn"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            <Icon name="download" size={18} />
+            <span>Direct Download (v{entry.data.version})</span>
+          </a>
+
+          {entry.data.githubUrl && (
+            <a
+              href={entry.data.githubUrl}
+              class="button button-ghost hero-github-btn"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              <Icon name="github" size={18} />
+              <span>GitHub Repository</span>
+            </a>
+          )}
+        </div>
+      </div>
+
+      {entry.data.tags && entry.data.tags.length > 0 && (
+        <div class="article-tags-wrap" style="margin-top: 1.5rem;">
+          {entry.data.tags.map((tag) => (
+            <span class="article-tag-chip">#{tag}</span>
+          ))}
+        </div>
+      )}
+    </header>
+
+    <!-- Main Tool Documentation Body -->
+    <div class="article-body-layout">
+      <main class="article-prose">
+        <Content />
+      </main>
+
+      <!-- Tactical Sidebar -->
+      <aside class="article-sidebar">
+        <div class="sidebar-block">
+          <h3 class="sidebar-title"><Icon name="package" size={16} /> Tool Specifications</h3>
+          <div class="sidebar-specs-list">
+            <div class="spec-row">
+              <span class="spec-key">Tool Name</span>
+              <span class="spec-val">{entry.data.name}</span>
+            </div>
+            <div class="spec-row">
+              <span class="spec-key">Current Version</span>
+              <span class="spec-val">v{entry.data.version}</span>
+            </div>
+            <div class="spec-row">
+              <span class="spec-key">Classification</span>
+              <span class="spec-val">{entry.data.type}</span>
+            </div>
+            <div class="spec-row">
+              <span class="spec-key">License</span>
+              <span class="spec-val">Open Source (MIT)</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="sidebar-block">
+          <h3 class="sidebar-title"><Icon name="terminal" size={16} /> Supported Platforms</h3>
+          <div class="sidebar-os-chips">
+            {(entry.data.os || []).map((os) => (
+              <span class:list={["tool-os-chip", `os-${os.toLowerCase().replace(/[^a-z0-9]/g, "-")}`]}>
+                {os}
+              </span>
+            ))}
+          </div>
+        </div>
+
+        <div class="sidebar-block">
+          <h3 class="sidebar-title"><Icon name="download" size={16} /> Quick Links</h3>
+          <div class="sidebar-links-list">
+            <a href={entry.data.downloadUrl} class="sidebar-link-btn primary" target="_blank" rel="noopener noreferrer">
+              <Icon name="download" size={14} />
+              <span>Direct Download Package</span>
+            </a>
+            {entry.data.githubUrl && (
+              <a href={entry.data.githubUrl} class="sidebar-link-btn" target="_blank" rel="noopener noreferrer">
+                <Icon name="github" size={14} />
+                <span>GitHub Source Tree</span>
+              </a>
+            )}
+            <a href={withBase("/tools/")} class="sidebar-link-btn">
+              <Icon name="wrench" size={14} />
+              <span>All Security Tools</span>
+            </a>
+          </div>
+        </div>
+      </aside>
+    </div>
+  </div>
+</BaseLayout>
+
+<style>
+  .tool-version-pill {
+    font-size: 0.72rem;
+    font-weight: 800;
+    font-family: var(--font-mono);
+    padding: 0.15rem 0.5rem;
+    background: var(--surface-panel);
+    border: 1px solid var(--line);
+    border-radius: 4px;
+    color: var(--text-muted);
+  }
+
+  .tool-featured-pill {
+    font-size: 0.72rem;
+    font-weight: 900;
+    font-family: var(--font-mono);
+    padding: 0.15rem 0.5rem;
+    background: var(--alert-soft);
+    color: var(--alert);
+    border: 1px solid var(--alert);
+    border-radius: 4px;
+    letter-spacing: 0.05em;
+  }
+
+  .tool-hero-cta-banner {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 1.5rem;
+    margin-top: 1.75rem;
+    padding: 1.25rem 1.5rem;
+    background: var(--surface-panel);
+    border: 1px solid var(--line);
+    border-radius: var(--radius-sm);
+    flex-wrap: wrap;
+  }
+
+  .tool-hero-cta-left .cta-label {
+    display: block;
+    font-size: 0.85rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: var(--text);
+  }
+
+  .tool-hero-cta-left .cta-subtext {
+    margin: 0.2rem 0 0 0;
+    font-size: 0.85rem;
+    color: var(--text-muted);
+  }
+
+  .tool-hero-cta-buttons {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    flex-wrap: wrap;
+  }
+
+  .hero-download-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.75rem 1.4rem;
+    font-size: 0.95rem;
+    font-weight: 900;
+    text-decoration: none;
+    border-radius: var(--radius-sm);
+  }
+
+  .hero-github-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.75rem 1.1rem;
+    font-size: 0.95rem;
+    font-weight: 700;
+    text-decoration: none;
+    border-radius: var(--radius-sm);
+  }
+
+  .sidebar-block {
+    padding: 1.25rem;
+    background: var(--surface);
+    border: var(--ink-border);
+    border-radius: var(--radius-sm);
+    box-shadow: 2px 2px 0 var(--line);
+    margin-bottom: 1.5rem;
+  }
+
+  .sidebar-title {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin: 0 0 1rem 0;
+    font-size: 0.9rem;
+    font-weight: 900;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: var(--text);
+    border-bottom: 1px dashed var(--line);
+    padding-bottom: 0.5rem;
+  }
+
+  .sidebar-specs-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.6rem;
+  }
+
+  .spec-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 0.85rem;
+  }
+
+  .spec-key {
+    color: var(--text-muted);
+    font-size: 0.8rem;
+  }
+
+  .spec-val {
+    font-weight: 700;
+    font-family: var(--font-mono);
+    color: var(--text);
+  }
+
+  .sidebar-os-chips {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    flex-wrap: wrap;
+  }
+
+  .tool-os-chip {
+    padding: 0.2rem 0.5rem;
+    font-size: 0.75rem;
+    font-weight: 700;
+    font-family: var(--font-mono);
+    background: var(--surface-panel);
+    color: var(--text-muted);
+    border: 1px solid var(--line);
+    border-radius: 4px;
+  }
+
+  .tool-os-chip.os-firefox {
+    border-color: #f97316;
+    color: #ea580c;
+    background: rgba(249, 115, 22, 0.1);
+  }
+
+  .tool-os-chip.os-chrome {
+    border-color: #3b82f6;
+    color: #2563eb;
+    background: rgba(59, 130, 246, 0.1);
+  }
+
+  .tool-os-chip.os-cross-platform {
+    border-color: #10b981;
+    color: #059669;
+    background: rgba(16, 185, 129, 0.1);
+  }
+
+  .sidebar-links-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.6rem;
+  }
+
+  .sidebar-link-btn {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.55rem 0.85rem;
+    font-size: 0.82rem;
+    font-weight: 700;
+    text-decoration: none;
+    border-radius: var(--radius-sm);
+    border: 1px solid var(--line);
+    background: var(--surface-panel);
+    color: var(--text);
+    transition: all 0.15s ease;
+  }
+
+  .sidebar-link-btn:hover {
+    border-color: var(--text);
+    background: var(--surface);
+    transform: translateY(-1px);
+  }
+
+  .sidebar-link-btn.primary {
+    background: var(--primary);
+    color: #ffffff;
+    border-color: var(--primary);
+  }
+
+  @media (max-width: 900px) {
+    .tool-hero-cta-banner {
+      flex-direction: column;
+      align-items: stretch;
+    }
+
+    .tool-hero-cta-buttons {
+      flex-direction: column;
+      align-items: stretch;
+    }
+
+    .tool-hero-cta-buttons .button {
+      justify-content: center;
+    }
+  }
+</style>

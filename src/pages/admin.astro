@@ -89,14 +89,38 @@ const ctfChallenges = (await getCollection("ctfChallenges")).map((c) => {
   };
 }).sort((a, b) => b._timestamp - a._timestamp);
 
+const toolList = (await getCollection("tools")).map((t) => {
+  const fileTime = getFileTimestamp(`src/content/tools/${t.slug}.md`);
+  const ts = fileTime || Date.now();
+  return {
+    slug: t.slug,
+    name: t.data.name,
+    tagline: t.data.tagline,
+    description: t.data.description,
+    type: t.data.type,
+    os: t.data.os || [],
+    version: t.data.version || "1.0.0",
+    releaseDate: t.data.releaseDate || "",
+    downloadUrl: t.data.downloadUrl,
+    githubUrl: t.data.githubUrl || "",
+    docsUrl: t.data.docsUrl || "",
+    featured: t.data.featured || false,
+    tags: t.data.tags || [],
+    body: t.body,
+    _timestamp: ts,
+    _dateStr: t.data.version ? `v${t.data.version}` : formatDate(ts)
+  };
+}).sort((a, b) => b._timestamp - a._timestamp);
+
 const existingPostsJson = JSON.stringify(blogPosts).replace(/</g, "\\u003c");
 const existingActorsJson = JSON.stringify(actorList).replace(/</g, "\\u003c");
 const existingCtfJson = JSON.stringify(ctfChallenges).replace(/</g, "\\u003c");
+const existingToolsJson = JSON.stringify(toolList).replace(/</g, "\\u003c");
 ---
 
 <BaseLayout
   title="Inked Intel Studio | Ahmed Elessaway"
-  description="In-browser publishing and management studio for research articles, threat dossiers, and CTF challenges."
+  description="In-browser publishing and management studio for research articles, threat dossiers, security tools, and CTF challenges."
   robots="noindex,nofollow"
 >
   <div class="studio-wrapper">
@@ -116,7 +140,7 @@ const existingCtfJson = JSON.stringify(ctfChallenges).replace(/</g, "\\u003c");
       <div class="studio-top-controls">
         <button type="button" class="button button-ghost" id="library-modal-open">
           <Icon name="policy" size={16} />
-          Content Library (<span id="library-count">{blogPosts.length + actorList.length + ctfChallenges.length}</span>)
+          Content Library (<span id="library-count">{blogPosts.length + actorList.length + ctfChallenges.length + toolList.length}</span>)
         </button>
 
         <div class="studio-auth-box">
@@ -145,6 +169,10 @@ const existingCtfJson = JSON.stringify(ctfChallenges).replace(/</g, "\\u003c");
         <button type="button" class="studio-tab" data-type="ctf">
           <Icon name="flag" size={16} />
           CTF Challenge
+        </button>
+        <button type="button" class="studio-tab" data-type="tools">
+          <Icon name="wrench" size={16} />
+          Security Tool
         </button>
       </div>
 
@@ -371,6 +399,86 @@ const existingCtfJson = JSON.stringify(ctfChallenges).replace(/</g, "\\u003c");
           </div>
         </div>
 
+        <!-- 4. Metadata Form for Security Tools -->
+        <div id="form-tools" class="studio-meta-group" style="display: none;">
+          <div class="studio-input-grid">
+            <label class="studio-field studio-field-wide">
+              <span class="studio-label">Tool Name *</span>
+              <input type="text" id="tool-name" class="studio-input" placeholder="e.g. ShadowExplorerX" />
+            </label>
+
+            <label class="studio-field">
+              <span class="studio-label">Tool Slug (URL) *</span>
+              <input type="text" id="tool-slug" class="studio-input mono" placeholder="shadowexplorerx" />
+            </label>
+
+            <label class="studio-field">
+              <span class="studio-label">Tool Classification / Type *</span>
+              <select id="tool-type" class="studio-input">
+                <option value="Browser Extension">Browser Extension</option>
+                <option value="CTI / Threat Hunting">CTI / Threat Hunting</option>
+                <option value="CLI Tool">CLI Tool</option>
+                <option value="Forensics & Triage">Forensics & Triage</option>
+                <option value="Malware Analysis">Malware Analysis</option>
+                <option value="OSINT">OSINT</option>
+                <option value="PoC & Exploitation">PoC & Exploitation</option>
+              </select>
+            </label>
+
+            <label class="studio-field studio-field-wide">
+              <span class="studio-label">Punchy Tagline *</span>
+              <input type="text" id="tool-tagline" class="studio-input" placeholder="e.g. Safe Threat Intel & C2 Open Directory Triage Extension" />
+            </label>
+
+            <label class="studio-field studio-field-wide">
+              <span class="studio-label">Full Capability Description *</span>
+              <textarea id="tool-desc" class="studio-input" rows="2" placeholder="Explain what the tool does, who it is for, and how it protects workflows..."></textarea>
+            </label>
+
+            <label class="studio-field studio-field-wide">
+              <span class="studio-label">Supported Platforms / OS (comma separated) *</span>
+              <input type="text" id="tool-os" class="studio-input" placeholder="Firefox, Chrome, Cross-Platform, Windows, Linux, macOS" value="Firefox, Chrome, Cross-Platform, Windows, Linux, macOS" />
+            </label>
+
+            <label class="studio-field">
+              <span class="studio-label">Version *</span>
+              <input type="text" id="tool-version" class="studio-input mono" placeholder="1.0.0" value="1.0.0" />
+            </label>
+
+            <label class="studio-field">
+              <span class="studio-label">Release Date</span>
+              <input type="date" id="tool-date" class="studio-input" />
+            </label>
+
+            <label class="studio-field studio-field-wide">
+              <span class="studio-label">Direct Download URL (zip / release link) *</span>
+              <input type="url" id="tool-download-url" class="studio-input" placeholder="https://github.com/xElessaway/.../releases/download/.../tool.zip" />
+            </label>
+
+            <label class="studio-field">
+              <span class="studio-label">GitHub Repository URL (optional)</span>
+              <input type="url" id="tool-github-url" class="studio-input" placeholder="https://github.com/xElessaway/..." />
+            </label>
+
+            <label class="studio-field">
+              <span class="studio-label">Docs / Store URL (optional)</span>
+              <input type="url" id="tool-docs-url" class="studio-input" placeholder="https://addons.mozilla.org/..." />
+            </label>
+
+            <label class="studio-field studio-field-wide">
+              <span class="studio-label">Tags (comma separated)</span>
+              <input type="text" id="tool-tags" class="studio-input" placeholder="threat-intelligence, c2-hunting, sandbox" value="threat-intelligence, tools" />
+            </label>
+
+            <div class="studio-field-checkboxes">
+              <label class="studio-checkbox-label">
+                <input type="checkbox" id="tool-featured" />
+                <span>Featured in Tools Arsenal</span>
+              </label>
+            </div>
+          </div>
+        </div>
+
         <!-- Markdown Toolbar -->
         <div class="studio-toolbar">
           <button type="button" class="toolbar-btn" data-tool="h2">H2</button>
@@ -430,6 +538,7 @@ const existingCtfJson = JSON.stringify(ctfChallenges).replace(/</g, "\\u003c");
           <button type="button" class="filter-chip" data-filter="blog">Articles</button>
           <button type="button" class="filter-chip" data-filter="actors">Threat Dossiers</button>
           <button type="button" class="filter-chip" data-filter="ctf">CTF Challenges</button>
+          <button type="button" class="filter-chip" data-filter="tools">Security Tools</button>
         </div>
       </div>
 
@@ -506,6 +615,7 @@ const existingCtfJson = JSON.stringify(ctfChallenges).replace(/</g, "\\u003c");
   <script is:inline type="application/json" id="studio-seed-posts" set:html={existingPostsJson}></script>
   <script is:inline type="application/json" id="studio-seed-actors" set:html={existingActorsJson}></script>
   <script is:inline type="application/json" id="studio-seed-ctf" set:html={existingCtfJson}></script>
+  <script is:inline type="application/json" id="studio-seed-tools" set:html={existingToolsJson}></script>
   <script is:inline src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
 
   <script is:inline>
@@ -517,10 +627,12 @@ const existingCtfJson = JSON.stringify(ctfChallenges).replace(/</g, "\\u003c");
     let libraryPosts = [];
     let libraryActors = [];
     let libraryCtf = [];
+    let libraryTools = [];
     try {
       libraryPosts = JSON.parse(document.getElementById("studio-seed-posts")?.textContent || "[]");
       libraryActors = JSON.parse(document.getElementById("studio-seed-actors")?.textContent || "[]");
       libraryCtf = JSON.parse(document.getElementById("studio-seed-ctf")?.textContent || "[]");
+      libraryTools = JSON.parse(document.getElementById("studio-seed-tools")?.textContent || "[]");
     } catch (e) {
       console.error("Failed to parse seed data", e);
     }
@@ -566,6 +678,20 @@ const existingCtfJson = JSON.stringify(ctfChallenges).replace(/</g, "\\u003c");
     const ctfHintInput = document.getElementById("ctf-hint");
     const ctfAnswersInput = document.getElementById("ctf-answers");
 
+    const toolNameInput = document.getElementById("tool-name");
+    const toolSlugInput = document.getElementById("tool-slug");
+    const toolTypeInput = document.getElementById("tool-type");
+    const toolTaglineInput = document.getElementById("tool-tagline");
+    const toolDescInput = document.getElementById("tool-desc");
+    const toolOsInput = document.getElementById("tool-os");
+    const toolVersionInput = document.getElementById("tool-version");
+    const toolDateInput = document.getElementById("tool-date");
+    const toolDownloadUrlInput = document.getElementById("tool-download-url");
+    const toolGithubUrlInput = document.getElementById("tool-github-url");
+    const toolDocsUrlInput = document.getElementById("tool-docs-url");
+    const toolTagsInput = document.getElementById("tool-tags");
+    const toolFeaturedCheck = document.getElementById("tool-featured");
+
     const editor = document.getElementById("markdown-editor");
     const editingIndicator = document.getElementById("editing-indicator");
     const publishBtn = document.getElementById("studio-publish-btn");
@@ -609,6 +735,9 @@ const existingCtfJson = JSON.stringify(ctfChallenges).replace(/</g, "\\u003c");
     if (dateInput && !dateInput.value) {
       dateInput.value = new Date().toISOString().split("T")[0];
     }
+    if (toolDateInput && !toolDateInput.value) {
+      toolDateInput.value = new Date().toISOString().split("T")[0];
+    }
 
     function generateSlug(text) {
       return text.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)+/g, "");
@@ -623,6 +752,9 @@ const existingCtfJson = JSON.stringify(ctfChallenges).replace(/</g, "\\u003c");
     });
     ctfTitleInput?.addEventListener("input", () => {
       if (!currentOriginalSlug) ctfSlugInput.value = generateSlug(ctfTitleInput.value);
+    });
+    toolNameInput?.addEventListener("input", () => {
+      if (!currentOriginalSlug) toolSlugInput.value = generateSlug(toolNameInput.value);
     });
 
     // Alert helper
@@ -734,10 +866,12 @@ const existingCtfJson = JSON.stringify(ctfChallenges).replace(/</g, "\\u003c");
         const formBlog = document.getElementById("form-blog");
         const formActors = document.getElementById("form-actors");
         const formCtf = document.getElementById("form-ctf");
+        const formTools = document.getElementById("form-tools");
 
         if (formBlog) formBlog.style.display = type === "blog" ? "block" : "none";
         if (formActors) formActors.style.display = type === "actors" ? "block" : "none";
         if (formCtf) formCtf.style.display = type === "ctf" ? "block" : "none";
+        if (formTools) formTools.style.display = type === "tools" ? "block" : "none";
 
         resetToNewPost();
       });
@@ -762,6 +896,9 @@ const existingCtfJson = JSON.stringify(ctfChallenges).replace(/</g, "\\u003c");
             previewDesc.textContent = rawPrompt;
           }
         }
+      } else if (currentStudioMode === "tools") {
+        if (previewTitle) previewTitle.textContent = toolNameInput.value.trim() || "Security Tool";
+        if (previewDesc) previewDesc.textContent = toolTaglineInput.value.trim() || toolDescInput.value.trim() || "Tool capability summary...";
       } else {
         if (previewTitle) previewTitle.textContent = titleInput.value.trim() || "Untitled Article";
         if (previewDesc) previewDesc.textContent = descInput.value.trim() || "Description summary...";
@@ -780,7 +917,13 @@ const existingCtfJson = JSON.stringify(ctfChallenges).replace(/</g, "\\u003c");
       }
     }
 
-    [titleInput, slugInput, descInput, actorNameInput, actorSlugInput, actorMotivationInput, ctfTitleInput, ctfSlugInput, ctfPromptInput, editor].forEach((el) => {
+    [
+      titleInput, slugInput, descInput,
+      actorNameInput, actorSlugInput, actorMotivationInput,
+      ctfTitleInput, ctfSlugInput, ctfPromptInput,
+      toolNameInput, toolSlugInput, toolTaglineInput, toolDescInput,
+      editor
+    ].forEach((el) => {
       el?.addEventListener("input", updatePreview);
     });
 
@@ -797,6 +940,18 @@ const existingCtfJson = JSON.stringify(ctfChallenges).replace(/</g, "\\u003c");
       if (ctfSlugInput) ctfSlugInput.value = "";
       if (ctfPromptInput) ctfPromptInput.value = "";
       if (ctfAnswersInput) ctfAnswersInput.value = "";
+      if (toolNameInput) toolNameInput.value = "";
+      if (toolSlugInput) toolSlugInput.value = "";
+      if (toolTaglineInput) toolTaglineInput.value = "";
+      if (toolDescInput) toolDescInput.value = "";
+      if (toolOsInput) toolOsInput.value = "Firefox, Chrome, Cross-Platform, Windows, Linux, macOS";
+      if (toolVersionInput) toolVersionInput.value = "1.0.0";
+      if (toolDateInput) toolDateInput.value = new Date().toISOString().split("T")[0];
+      if (toolDownloadUrlInput) toolDownloadUrlInput.value = "";
+      if (toolGithubUrlInput) toolGithubUrlInput.value = "";
+      if (toolDocsUrlInput) toolDocsUrlInput.value = "";
+      if (toolTagsInput) toolTagsInput.value = "threat-intelligence, tools";
+      if (toolFeaturedCheck) toolFeaturedCheck.checked = false;
       if (editingIndicator) editingIndicator.textContent = "New Post Mode";
       updatePreview();
     }
@@ -816,10 +971,12 @@ const existingCtfJson = JSON.stringify(ctfChallenges).replace(/</g, "\\u003c");
       const formBlog = document.getElementById("form-blog");
       const formActors = document.getElementById("form-actors");
       const formCtf = document.getElementById("form-ctf");
+      const formTools = document.getElementById("form-tools");
 
       if (formBlog) formBlog.style.display = type === "blog" ? "block" : "none";
       if (formActors) formActors.style.display = type === "actors" ? "block" : "none";
       if (formCtf) formCtf.style.display = type === "ctf" ? "block" : "none";
+      if (formTools) formTools.style.display = type === "tools" ? "block" : "none";
 
       if (type === "actors") {
         if (actorNameInput) actorNameInput.value = item.name || "";
@@ -848,6 +1005,21 @@ const existingCtfJson = JSON.stringify(ctfChallenges).replace(/</g, "\\u003c");
         if (ctfHintInput) ctfHintInput.value = item.hint || "";
         if (ctfAnswersInput) ctfAnswersInput.value = (item.answerHashes || []).join(", ");
         if (editor) editor.value = item.body || "";
+      } else if (type === "tools") {
+        if (toolNameInput) toolNameInput.value = item.name || "";
+        if (toolSlugInput) toolSlugInput.value = item.slug || "";
+        if (toolTypeInput) toolTypeInput.value = item.type || "Browser Extension";
+        if (toolTaglineInput) toolTaglineInput.value = item.tagline || "";
+        if (toolDescInput) toolDescInput.value = item.description || "";
+        if (toolOsInput) toolOsInput.value = Array.isArray(item.os) ? item.os.join(", ") : (item.os || "");
+        if (toolVersionInput) toolVersionInput.value = item.version || "1.0.0";
+        if (toolDateInput) toolDateInput.value = item.releaseDate || "";
+        if (toolDownloadUrlInput) toolDownloadUrlInput.value = item.downloadUrl || "";
+        if (toolGithubUrlInput) toolGithubUrlInput.value = item.githubUrl || "";
+        if (toolDocsUrlInput) toolDocsUrlInput.value = item.docsUrl || "";
+        if (toolTagsInput) toolTagsInput.value = Array.isArray(item.tags) ? item.tags.join(", ") : (item.tags || "");
+        if (toolFeaturedCheck) toolFeaturedCheck.checked = !!item.featured;
+        if (editor) editor.value = item.body || "";
       } else {
         if (titleInput) titleInput.value = item.title || "";
         if (slugInput) slugInput.value = item.slug || "";
@@ -874,7 +1046,8 @@ const existingCtfJson = JSON.stringify(ctfChallenges).replace(/</g, "\\u003c");
       let combined = [
         ...libraryPosts.map((p) => ({ ...p, __type: "blog" })),
         ...libraryActors.map((a) => ({ ...a, __type: "actors" })),
-        ...libraryCtf.map((c) => ({ ...c, __type: "ctf" }))
+        ...libraryCtf.map((c) => ({ ...c, __type: "ctf" })),
+        ...libraryTools.map((t) => ({ ...t, __type: "tools" }))
       ];
 
       // Sort by timestamp descending (newest on top)
@@ -899,7 +1072,7 @@ const existingCtfJson = JSON.stringify(ctfChallenges).replace(/</g, "\\u003c");
       }
 
       libraryList.innerHTML = filtered.map((item) => {
-        const typeLabels = { blog: "ARTICLE", actors: "DOSSIER", ctf: "CTF" };
+        const typeLabels = { blog: "ARTICLE", actors: "DOSSIER", ctf: "CTF", tools: "TOOL" };
         const label = typeLabels[item.__type] || item.__type.toUpperCase();
         const dateDisplay = item._dateStr ? `<span class="library-item-date">${item._dateStr}</span>` : "";
         return `
@@ -925,6 +1098,7 @@ const existingCtfJson = JSON.stringify(ctfChallenges).replace(/</g, "\\u003c");
       let list = libraryPosts;
       if (type === "actors") list = libraryActors;
       if (type === "ctf") list = libraryCtf;
+      if (type === "tools") list = libraryTools;
       const item = list.find((p) => p.slug === slug);
       if (item) loadPostIntoEditor(item, type);
     };
@@ -1004,9 +1178,13 @@ const existingCtfJson = JSON.stringify(ctfChallenges).replace(/</g, "\\u003c");
             libraryActors = libraryActors.filter((a) => a.slug !== pendingDeleteSlug);
           } else if (pendingDeleteType === "ctf") {
             libraryCtf = libraryCtf.filter((c) => c.slug !== pendingDeleteSlug);
+          } else if (pendingDeleteType === "tools") {
+            libraryTools = libraryTools.filter((t) => t.slug !== pendingDeleteSlug);
           } else {
             libraryPosts = libraryPosts.filter((p) => p.slug !== pendingDeleteSlug);
           }
+          const libraryCountEl = document.getElementById("library-count");
+          if (libraryCountEl) libraryCountEl.textContent = libraryPosts.length + libraryActors.length + libraryCtf.length + libraryTools.length;
           renderLibrary(librarySearch?.value || "");
           deleteDialog?.close();
           resetToNewPost();
@@ -1294,11 +1472,41 @@ const existingCtfJson = JSON.stringify(ctfChallenges).replace(/</g, "\\u003c");
         const bodyContent = frontmatterMatch[2].trim();
         const meta = parseYamlString(yamlBlock);
 
-        // Detect if this is an Actor Dossier or a Blog Post
-        const isActor = !!(meta.name || meta.motivation || meta.origin || meta.tools || meta.ttps || meta.aliases);
-        const isCtf = !!(meta.collection || meta.prompt || meta.passwordFormat || meta.answerHashes);
+        // Detect if this is a Tool, Actor Dossier, CTF Challenge, or Blog Post
+        const isTool = !!(meta.downloadUrl || meta.tagline || (meta.name && (meta.os || meta.version)));
+        const isActor = !isTool && !!(meta.name || meta.motivation || meta.origin || meta.tools || meta.ttps || meta.aliases);
+        const isCtf = !isTool && !!(meta.collection || meta.prompt || meta.passwordFormat || meta.answerHashes);
 
-        if (isActor) {
+        if (isTool) {
+          // Switch tab to tools
+          document.querySelectorAll(".studio-tab").forEach((t) => t.classList.remove("is-active"));
+          const toolTab = document.querySelector('.studio-tab[data-type="tools"]');
+          toolTab?.classList.add("is-active");
+          currentStudioMode = "tools";
+
+          const formBlog = document.getElementById("form-blog");
+          const formActors = document.getElementById("form-actors");
+          const formCtf = document.getElementById("form-ctf");
+          const formTools = document.getElementById("form-tools");
+          if (formBlog) formBlog.style.display = "none";
+          if (formActors) formActors.style.display = "none";
+          if (formCtf) formCtf.style.display = "none";
+          if (formTools) formTools.style.display = "block";
+
+          if (toolNameInput) toolNameInput.value = meta.name || "";
+          if (toolSlugInput) toolSlugInput.value = meta.slug || generateSlug(meta.name || "tool");
+          if (toolTypeInput && meta.type) toolTypeInput.value = meta.type;
+          if (toolTaglineInput) toolTaglineInput.value = meta.tagline || "";
+          if (toolDescInput) toolDescInput.value = meta.description || "";
+          if (toolOsInput) toolOsInput.value = Array.isArray(meta.os) ? meta.os.join(", ") : (meta.os || "");
+          if (toolVersionInput) toolVersionInput.value = meta.version || "1.0.0";
+          if (toolDateInput && meta.releaseDate) toolDateInput.value = meta.releaseDate;
+          if (toolDownloadUrlInput) toolDownloadUrlInput.value = meta.downloadUrl || "";
+          if (toolGithubUrlInput) toolGithubUrlInput.value = meta.githubUrl || "";
+          if (toolDocsUrlInput) toolDocsUrlInput.value = meta.docsUrl || "";
+          if (toolTagsInput) toolTagsInput.value = Array.isArray(meta.tags) ? meta.tags.join(", ") : (meta.tags || "");
+          if (toolFeaturedCheck) toolFeaturedCheck.checked = !!meta.featured;
+        } else if (isActor) {
           // Switch tab to actors
           document.querySelectorAll(".studio-tab").forEach((t) => t.classList.remove("is-active"));
           const actorTab = document.querySelector('.studio-tab[data-type="actors"]');
@@ -1308,9 +1516,11 @@ const existingCtfJson = JSON.stringify(ctfChallenges).replace(/</g, "\\u003c");
           const formBlog = document.getElementById("form-blog");
           const formActors = document.getElementById("form-actors");
           const formCtf = document.getElementById("form-ctf");
+          const formTools = document.getElementById("form-tools");
           if (formBlog) formBlog.style.display = "none";
           if (formActors) formActors.style.display = "block";
           if (formCtf) formCtf.style.display = "none";
+          if (formTools) formTools.style.display = "none";
 
           if (actorNameInput) actorNameInput.value = meta.name || "";
           if (actorSlugInput) actorSlugInput.value = meta.slug || generateSlug(meta.name || "cluster");
@@ -1336,9 +1546,11 @@ const existingCtfJson = JSON.stringify(ctfChallenges).replace(/</g, "\\u003c");
           const formBlog = document.getElementById("form-blog");
           const formActors = document.getElementById("form-actors");
           const formCtf = document.getElementById("form-ctf");
+          const formTools = document.getElementById("form-tools");
           if (formBlog) formBlog.style.display = "none";
           if (formActors) formActors.style.display = "none";
           if (formCtf) formCtf.style.display = "block";
+          if (formTools) formTools.style.display = "none";
 
           if (ctfTitleInput) ctfTitleInput.value = meta.title || "";
           if (ctfSlugInput) ctfSlugInput.value = meta.slug || generateSlug(meta.title || "challenge");
@@ -1358,9 +1570,11 @@ const existingCtfJson = JSON.stringify(ctfChallenges).replace(/</g, "\\u003c");
           const formBlog = document.getElementById("form-blog");
           const formActors = document.getElementById("form-actors");
           const formCtf = document.getElementById("form-ctf");
+          const formTools = document.getElementById("form-tools");
           if (formBlog) formBlog.style.display = "block";
           if (formActors) formActors.style.display = "none";
           if (formCtf) formCtf.style.display = "none";
+          if (formTools) formTools.style.display = "none";
 
           if (titleInput) titleInput.value = meta.title || "";
           if (slugInput) slugInput.value = meta.slug || generateSlug(meta.title || "article");
@@ -1485,6 +1699,30 @@ order: ${parseInt(ctfOrderInput.value, 10) || 1}
 ---
 
 ${editor.value}`;
+        } else if (currentStudioMode === "tools") {
+          itemTitle = toolNameInput.value.trim() || "Untitled Security Tool";
+          itemSlug = toolSlugInput.value.trim() || generateSlug(itemTitle);
+          targetPath = `src/content/tools/${itemSlug}.md`;
+
+          const osList = toolOsInput.value.split(",").map((s) => s.trim()).filter(Boolean);
+          const tags = toolTagsInput.value.split(",").map((s) => s.trim()).filter(Boolean);
+
+          markdownContent = `---
+name: "${itemTitle.replace(/"/g, '\\"')}"
+tagline: "${toolTaglineInput.value.replace(/"/g, '\\"')}"
+description: "${toolDescInput.value.replace(/"/g, '\\"')}"
+type: "${toolTypeInput.value}"
+os: ${JSON.stringify(osList)}
+version: "${toolVersionInput.value.trim() || "1.0.0"}"
+releaseDate: "${toolDateInput.value || new Date().toISOString().split("T")[0]}"
+downloadUrl: "${toolDownloadUrlInput.value.trim()}"
+githubUrl: "${toolGithubUrlInput.value.trim()}"
+docsUrl: "${toolDocsUrlInput.value.trim()}"
+featured: ${toolFeaturedCheck.checked}
+tags: ${JSON.stringify(tags)}
+---
+
+${editor.value}`;
         } else {
           itemTitle = titleInput.value.trim() || "Untitled Article";
           itemSlug = slugInput.value.trim() || generateSlug(itemTitle);
@@ -1594,6 +1832,30 @@ ${editor.value}`;
             };
             if (existingIdx >= 0) libraryCtf.splice(existingIdx, 1);
             libraryCtf.unshift(updatedItem);
+          } else if (currentStudioMode === "tools") {
+            const osList = toolOsInput.value.split(",").map((s) => s.trim()).filter(Boolean);
+            const tags = toolTagsInput.value.split(",").map((s) => s.trim()).filter(Boolean);
+            const existingIdx = libraryTools.findIndex((t) => t.slug === itemSlug);
+            const updatedItem = {
+              slug: itemSlug,
+              name: itemTitle,
+              tagline: toolTaglineInput.value.trim(),
+              description: toolDescInput.value.trim(),
+              type: toolTypeInput.value,
+              os: osList,
+              version: toolVersionInput.value.trim() || "1.0.0",
+              releaseDate: toolDateInput.value || nowStr,
+              downloadUrl: toolDownloadUrlInput.value.trim(),
+              githubUrl: toolGithubUrlInput.value.trim(),
+              docsUrl: toolDocsUrlInput.value.trim(),
+              featured: toolFeaturedCheck.checked,
+              tags: tags,
+              body: editor.value,
+              _timestamp: now,
+              _dateStr: `v${toolVersionInput.value.trim() || "1.0.0"}`
+            };
+            if (existingIdx >= 0) libraryTools.splice(existingIdx, 1);
+            libraryTools.unshift(updatedItem);
           } else {
             const existingIdx = libraryPosts.findIndex((p) => p.slug === itemSlug);
             const updatedItem = {
@@ -1616,7 +1878,7 @@ ${editor.value}`;
           }
 
           const libraryCountEl = document.getElementById("library-count");
-          if (libraryCountEl) libraryCountEl.textContent = libraryPosts.length + libraryActors.length + libraryCtf.length;
+          if (libraryCountEl) libraryCountEl.textContent = libraryPosts.length + libraryActors.length + libraryCtf.length + libraryTools.length;
         } else {
           const err = await putRes.json().catch(() => ({}));
           if (putRes.status === 404) {
@@ -2240,6 +2502,12 @@ ${editor.value}`;
       background: rgba(14, 165, 233, 0.15);
       color: #0284c7;
       border-color: #0284c7;
+    }
+
+    .dossier-type-tag.tools {
+      background: rgba(16, 185, 129, 0.15);
+      color: #059669;
+      border-color: #059669;
     }
 
     .library-item-actions {
