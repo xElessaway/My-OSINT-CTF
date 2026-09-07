@@ -10,10 +10,10 @@ os:
   - "Windows"
   - "Linux"
   - "macOS"
-version: "1.0.0"
+version: "1.0.1"
 releaseDate: "2026-09-07"
 icon: "terminal"
-downloadUrl: "https://github.com/xElessaway/ShadowExplorerX/releases/download/v1.0.0/shadow-explorer-x-1.0.0-firefox.zip"
+downloadUrl: "https://github.com/xElessaway/ShadowExplorerX/releases/download/v1.0.1/shadow-explorer-x-1.0.1-firefox.zip"
 githubUrl: "https://github.com/xElessaway/ShadowExplorerX"
 docsUrl: "https://xelessaway.me/tools/shadowexplorerx/"
 featured: true
